@@ -117,6 +117,7 @@ struct SearchBar_Previews: PreviewProvider {
             GeometryReader { geometry in
                 SearchBar(isEditing: $isEditing, showPlaceholderText: $showPlaceholderText, courses:courses, geometry: geometry, viewModel: viewModel)
             }
+            .previewLayout(.fixed(width: 400, height: 60))
         }
     }
 }
