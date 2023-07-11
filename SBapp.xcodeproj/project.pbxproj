@@ -20,6 +20,7 @@
 		50E1A5122A5D779C007E8C21 /* MainViewToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */; };
 		50F4380A2A459A2400499500 /* CourseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F438092A459A2400499500 /* CourseView.swift */; };
 		50F4380C2A459AB600499500 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4380B2A459AB600499500 /* WeekView.swift */; };
+		50F76D6F2A5DF57400CABE11 /* SearchBarMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +38,7 @@
 		50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewToolbar.swift; sourceTree = "<group>"; };
 		50F438092A459A2400499500 /* CourseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseView.swift; sourceTree = "<group>"; };
 		50F4380B2A459AB600499500 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
+		50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarMain.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 			children = (
 				50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */,
 				502E56992A437C9300DFD6ED /* ContentView.swift */,
+				50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */,
 				507D1E322A574368003CB6D4 /* FavoritesView.swift */,
 				50AA948F2A4EBB080089AB8B /* Title.swift */,
 				506A8E292A50B76F00938555 /* LoginView.swift */,
@@ -198,6 +201,7 @@
 				507D1E332A574368003CB6D4 /* FavoritesView.swift in Sources */,
 				50F4380A2A459A2400499500 /* CourseView.swift in Sources */,
 				506A8E2A2A50B76F00938555 /* LoginView.swift in Sources */,
+				50F76D6F2A5DF57400CABE11 /* SearchBarMain.swift in Sources */,
 				50DF13262A4F05CD00CBCC14 /* SearchBarButtons.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -20,8 +20,8 @@ struct SearchBarButtons: View {
                 Button {
                     backButton = false
                     dismissKeyboard()
+                    searchText = ""
                     withAnimation(.easeInOut(duration: 0.5)) {
-                        searchText = ""
                         isEditing = false
                         alignment = false
                         showList = false
@@ -32,6 +32,7 @@ struct SearchBarButtons: View {
                         .foregroundColor(Color.init(white: 0.5))
                 }
             }
+               
             Spacer()
             if  searchText.isEmpty {
                 Spacer()

@@ -11,7 +11,6 @@ struct SearchBar: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var isEditing: Bool
     @State var backButton = false
-//    @State var isListShown
     @State var searchText = ""
     @ObservedObject var courses: Courses
     @State private var searchResults: [Course] = []
@@ -103,12 +102,11 @@ struct SearchBar_Previews: PreviewProvider {
         @State private var backButton = false
         @State private var isListShown = false
         @State var searchResults: [Course] = []
-        @State var offset: CGFloat = 0
         var courses = Courses()
         let viewModel = CourseViewModel(numberOfWeeks: 13)
         var body: some View {
             GeometryReader{ geometry in
-                SearchBar(isEditing: $isEditing, courses: courses, geoHeight: geometry.size.height, viewModel: viewModel)
+                SearchBar(isEditing: $isEditing, courses: courses, geoHeight: geometry.size.height * 0.08, viewModel: viewModel)
             }
         }
     }

@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @StateObject var courses = Courses()
     @State private var isEditing = false
-    @State var offset: CGFloat = 0
     @Namespace private var searchTransition
     @State private var selectedTag: String?
     let viewModel = CourseViewModel(numberOfWeeks: 13)
@@ -22,38 +21,16 @@ struct ContentView: View {
                 VStack() {
                     if !isEditing {
                         MainViewToolbar(courses: courses, viewModel: viewModel)
+//                            .transition(.move(edge: .top))
                         Title()
                             .aspectRatio(CGSize(width: 15, height: 3), contentMode: .fit)
                             .padding(20)
-                    }
-                    ZStack (){
-                        GeometryReader { zGeometry in
-                            if !isEditing {
-                                Image("Leg")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                            }
-                            SearchBar(
-                                isEditing: $isEditing,
-                                courses: courses,
-                                geoHeight:  vGeometry.size.height * 0.08,
-                                viewModel: viewModel
-                            )
-                            .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
-                            .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                             
-                            if !isEditing {
-                                Image("Foregrnd")
-                                    .resizable()
-                                    .aspectRatio(contentMode: .fit)
-                                    .allowsHitTesting(false)
-                            }
-                        }
                     }
+                    SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: vGeometry)
                 }
-                
             }
-            .ignoresSafeArea(.keyboard, edges: .bottom)    
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
     }
 }
