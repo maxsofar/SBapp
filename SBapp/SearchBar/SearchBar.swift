@@ -19,7 +19,7 @@ struct SearchBar: View {
     @State private var phase: CGFloat = 165
     @State var showList = false
     var geoHeight: CGFloat
-    let viewModel: CourseViewModel
+    @ObservedObject var viewModel: CourseViewModel
     
     var body: some View {
         VStack {
@@ -42,7 +42,7 @@ struct SearchBar: View {
                 } label: {
                     ZStack {
                         Capsule(style: .continuous)
-                            .fill(colorScheme == .dark ? Color.init(white: 0.2) : Color.init(white: 0.9))
+                            .fill(colorScheme == .dark ? Color.init(white: 0.3) : Color.init(white: 0.9))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 25)
                                     .strokeBorder(.blue, style: StrokeStyle(lineWidth: 4, dash: [100, 1000], dashPhase: phase))
@@ -82,7 +82,9 @@ struct SearchBar: View {
             .frame(height: geoHeight)
             if showList {
                 List(searchResults) { course in
-                    NavigationLink(destination: CourseView(course: course, viewModel: viewModel)) {
+                    NavigationLink(destination:
+                        CourseView(course: course, viewModel: viewModel)
+                    ) {
                         Text(course.name)
                     }
                 }
@@ -91,23 +93,24 @@ struct SearchBar: View {
     }
 }
 
-struct SearchBar_Previews: PreviewProvider {
-    @State private var isEditing = false
-    static var previews: some View {
-        ContainerView()
-    }
-    
-    struct ContainerView: View {
-        @State private var isEditing = false
-        @State private var backButton = false
-        @State private var isListShown = false
-        @State var searchResults: [Course] = []
-        var courses = Courses()
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        var body: some View {
-            GeometryReader{ geometry in
-                SearchBar(isEditing: $isEditing, courses: courses, geoHeight: geometry.size.height * 0.08, viewModel: viewModel)
-            }
-        }
-    }
-}
+//struct SearchBar_Previews: PreviewProvider {
+//    @State private var isEditing = false
+//    static var previews: some View {
+//        ContainerView()
+//    }
+//    
+//    struct ContainerView: View {
+//        @State private var isEditing = false
+//        @State private var backButton = false
+//        @State private var isListShown = false
+//        @State var searchResults: [Course] = []
+//        var courses = Courses()
+//        @StateObject var viewModel = CourseViewModel(numberOfWeeks: 13)
+//        var body: some View {
+//            GeometryReader{ geometry in
+//                SearchBar(isEditing: $isEditing, courses: courses, geoHeight: geometry.size.height * 0.08)
+//                    .environmentObject(viewModel)
+//            }
+//        }
+//    }
+//}

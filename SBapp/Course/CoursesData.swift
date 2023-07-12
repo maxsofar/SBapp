@@ -10,7 +10,13 @@ import Foundation
 class Course : Identifiable {
     let id: Int
     let name: String
-    var isFavorite: Bool
+    var isFavorite: Bool {
+        didSet {
+            // Save the state of isFavorite to UserDefaults when it changes
+            let key = "isFavorite_\(id)"
+            UserDefaults.standard.set(isFavorite, forKey: key)
+        }
+    }
     let lectureTags: [String]
     let tutorialTags: [String]
     
@@ -24,9 +30,12 @@ class Course : Identifiable {
         
         self.id = id
         self.name = name
-        self.isFavorite = isFavorite
         self.lectureTags = lectureTags
         self.tutorialTags = tutorialTags
+        
+        // Load the state of isFavorite from UserDefaults when the course is initialized
+        let key = "isFavorite_\(id)"
+        self.isFavorite = UserDefaults.standard.bool(forKey: key)
     }
     
     func makeFavorite() {

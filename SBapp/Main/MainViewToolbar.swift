@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct MainViewToolbar: View {
-    var courses: Courses
+    @ObservedObject var courses: Courses
     var viewModel: CourseViewModel
     
     var body: some View {

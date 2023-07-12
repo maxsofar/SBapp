@@ -7,26 +7,27 @@
 
 import SwiftUI
 
+
+
 struct FavoritesView: View {
-    @ObservedObject var courses: Courses
+    var courses: Courses
     @State private var favoriteCourses: [Course] = []
     let viewModel: CourseViewModel
     
     var body: some View {
         VStack {
-            List (favoriteCourses) { course in
+            List (courses.courses.filter { $0.isFavorite }) { course in
                 NavigationLink(destination: CourseView(course: course, viewModel: viewModel)) {
                     Text(course.name)
                 }
-            }
-            .onAppear {
-                favoriteCourses = courses.courses.filter{$0.isFavorite}
             }
         }
         .navigationTitle("Favorites")
         .navigationBarTitleDisplayMode(.large)
     }
 }
+
+
 
 struct FavoritesView_Previews: PreviewProvider {
     static var previews: some View {
