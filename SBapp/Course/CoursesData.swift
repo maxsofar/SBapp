@@ -7,10 +7,10 @@
 
 import Foundation
 
-class Course : Identifiable {
+class Course : ObservableObject, Identifiable {
     let id: Int
     let name: String
-    var isFavorite: Bool {
+    @Published var isFavorite: Bool {
         didSet {
             // Save the state of isFavorite to UserDefaults when it changes
             let key = "isFavorite_\(id)"

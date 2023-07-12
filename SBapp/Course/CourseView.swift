@@ -52,15 +52,12 @@ struct CourseView: View {
     @ObservedObject var viewModel: CourseViewModel
     @State private var showingModal = false
     @Environment (\.colorScheme) var colorScheme
-    var course: Course
-    @State private var isFavorite: Bool
+    @ObservedObject var course: Course
     @State private var selectedTag: String?
-
     
     init(course: Course, selectedTag: String? = nil, viewModel: CourseViewModel) {
         self.viewModel = viewModel
         self.course = course
-        _isFavorite = State(initialValue: course.isCourseFavorite())
     }
     
     var body: some View {
@@ -104,7 +101,7 @@ struct CourseView: View {
                         .padding([.horizontal], 10)
                         .padding([.vertical], 10)
                         .frame(maxWidth: .infinity)
-                        .background(colorScheme == .dark ? Color.init(white: 0.2) : Color.white)
+                        .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
                         .cornerRadius(10)
                         //                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
                     }
@@ -121,10 +118,9 @@ struct CourseView: View {
                 Button{
                     let generator = UIImpactFeedbackGenerator(style: .light)
                     generator.impactOccurred()
-                    isFavorite.toggle()
                     course.makeFavorite()
                 } label: {
-                    Image(systemName: isFavorite ? "star.fill" : "star")
+                    Image(systemName: course.isFavorite ? "star.fill" : "star")
                         .scaleEffect(1.2)
                 }
                 Button() {
@@ -186,9 +182,11 @@ struct CourseView: View {
                                             }
                                         }
                                     }
+                                    
                                 }
                             }
                         }
+                        
                         .padding([.top], -20)
                     }
                     .background(colorScheme == .light ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemGroupedBackground)) 

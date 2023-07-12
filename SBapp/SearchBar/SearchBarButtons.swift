@@ -53,26 +53,27 @@ struct SearchBarButtons: View {
     }
 }
 
-//struct SearchBarBackground_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContainerView()
-//    }
-//    struct ContainerView: View {
-//        @State private var isEditing = false
-//        @State var offset: CGFloat = 0
-//        @State var searchText = ""
-//        @State var backButton = true
-//        @State var alignment: Bool = false
-//
-//        var body: some View {
-//            SearchBarButtons(
-//                isEditing: $isEditing,
-//                searchText: $searchText,
-//                backButton: $backButton,
-//                alignment: $alignment
-//            )
-//                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
-//                .padding([.horizontal], 20)
-//        }
-//    }
-//}
+struct SearchBarBackground_Previews: PreviewProvider {
+    static var previews: some View {
+        ContainerView()
+    }
+    struct ContainerView: View {
+        @State var isEditing = false
+        @State var searchText = ""
+        @State var backButton = true
+        @State var alignment: Bool = false
+        @State var showList = false
+
+        var body: some View {
+            SearchBarButtons(
+                isEditing: $isEditing,
+                searchText: $searchText,
+                backButton: $backButton,
+                alignment: $alignment,
+                showList: $showList
+            )
+                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
+                .padding([.horizontal], 20)
+        }
+    }
+}

@@ -111,12 +111,12 @@
 		50E1A5132A5D897A007E8C21 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */,
 				502E56992A437C9300DFD6ED /* ContentView.swift */,
-				50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */,
 				507D1E322A574368003CB6D4 /* FavoritesView.swift */,
-				50AA948F2A4EBB080089AB8B /* Title.swift */,
 				506A8E292A50B76F00938555 /* LoginView.swift */,
+				50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */,
+				50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */,
+				50AA948F2A4EBB080089AB8B /* Title.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
