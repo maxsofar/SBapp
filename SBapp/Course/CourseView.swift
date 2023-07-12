@@ -24,11 +24,29 @@ struct ChecklistToggleStyle: ToggleStyle {
 }
 
 class CourseViewModel: ObservableObject {
-    @Published var isComplete: [Bool]
+    @Published var isComplete: [String: [Bool]] {
+        didSet {
+            // Save the state of isComplete to UserDefaults when it changes
+            UserDefaults.standard.set(isComplete, forKey: "isComplete")
+        }
+    }
+
     init(numberOfWeeks: Int) {
-        self.isComplete = Array(repeating: false, count: numberOfWeeks)
+        // Load the state of isComplete from UserDefaults when the viewModel is initialized
+        self.isComplete = UserDefaults.standard.dictionary(forKey: "isComplete") as? [String: [Bool]] ?? [:]
+    }
+    
+    func getIsComplete(for course: Course) -> [Bool] {
+        return isComplete[String(course.id)] ?? Array(repeating: false, count: 13)
+    }
+    
+    func setIsComplete(_ value: [Bool], for course: Course) {
+        isComplete[String(course.id)] = value
     }
 }
+
+
+
 
 struct CourseView: View {
     @ObservedObject var viewModel: CourseViewModel
@@ -59,14 +77,21 @@ struct CourseView: View {
                                 .padding([.horizontal], 10)
                         } label: {
                             HStack {
-                                Toggle(isOn: $viewModel.isComplete[weekNumber - 1]) {}
+                                Toggle(isOn: Binding(
+                                    get: { viewModel.getIsComplete(for: course)[weekNumber - 1] },
+                                    set: { newValue in
+                                        var isComplete = viewModel.getIsComplete(for: course)
+                                        isComplete[weekNumber - 1] = newValue
+                                        viewModel.setIsComplete(isComplete, for: course)
+                                    }
+                                )) {}
                                     .toggleStyle(ChecklistToggleStyle())
                                 Spacer()
                                 Text("Week \(weekNumber)")
                                     .frame(width: 75)
                                     .font(.title3)
                                     .foregroundColor ({
-                                        if (!viewModel.isComplete[weekNumber - 1]) {
+                                        if (!viewModel.getIsComplete(for: course)[weekNumber - 1]) {
                                             return colorScheme == .dark ? Color.white : Color.black
                                         } else {
                                             return Color.gray
@@ -116,16 +141,18 @@ struct CourseView: View {
                             .padding([.horizontal], 30)
                             .padding([.top], 40)
                         List {
-                            Button {
-                                selectedTag = nil
-                                showingModal = false
-                            } label: {
-                                HStack {
-                                    Text("All")
-                                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                    if selectedTag == nil {
-                                        Spacer()
-                                        Image(systemName: "checkmark")
+                            Section {
+                                Button {
+                                    selectedTag = nil
+                                    showingModal = false
+                                } label: {
+                                    HStack {
+                                        Text("All")
+                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                                        if selectedTag == nil {
+                                            Spacer()
+                                            Image(systemName: "checkmark")
+                                        }
                                     }
                                 }
                             }
@@ -171,10 +198,10 @@ struct CourseView: View {
     }
 }
 
-struct CourseView_Previews: PreviewProvider {
-    static var previews: some View {
-        let matam = Course(id: 11, name: "Matam")
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        CourseView(course: matam, viewModel: viewModel)
-    }
-}
+//struct CourseView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let matam = Course(id: 11, name: "Matam")
+//        let viewModel = CourseViewModel(numberOfWeeks: 13)
+//        CourseView(course: matam, viewModel: viewModel)
+//    }
+//}

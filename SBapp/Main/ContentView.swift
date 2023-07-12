@@ -12,7 +12,7 @@ struct ContentView: View {
     @State private var isEditing = false
     @Namespace private var searchTransition
     @State private var selectedTag: String?
-    let viewModel = CourseViewModel(numberOfWeeks: 13)
+    @StateObject var viewModel = CourseViewModel(numberOfWeeks: 13)
     let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
@@ -21,13 +21,12 @@ struct ContentView: View {
                 VStack() {
                     if !isEditing {
                         MainViewToolbar(courses: courses, viewModel: viewModel)
-//                            .transition(.move(edge: .top))
                         Title()
                             .aspectRatio(CGSize(width: 15, height: 3), contentMode: .fit)
                             .padding(20)
                             
                     }
-                    SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: vGeometry)
+                    SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: vGeometry, viewModel: viewModel)
                 }
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)

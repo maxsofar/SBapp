@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct SearchBarMain: View {
-    var courses: Courses
+    @ObservedObject var courses: Courses
     @Binding var isEditing: Bool
     @Namespace var searchTransition
     var vGeometry: GeometryProxy
-    let viewModel = CourseViewModel(numberOfWeeks: 13)
+    @ObservedObject var viewModel: CourseViewModel
     let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
@@ -30,6 +30,7 @@ struct SearchBarMain: View {
                     geoHeight:  vGeometry.size.height * 0.08,
                     viewModel: viewModel
                 )
+                .environmentObject(viewModel)
                 .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
@@ -44,19 +45,19 @@ struct SearchBarMain: View {
     }
 }
 
-struct SearchBarMain_Previews: PreviewProvider {
-    static var previews: some View {
-        ContainerView()
-    }
-    
-    struct ContainerView: View {
-        @State private var isEditing = false
-        var courses = Courses()
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        var body: some View {
-            GeometryReader{ geometry in
-                SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: geometry)
-            }
-        }
-    }
-}
+//struct SearchBarMain_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContainerView()
+//    }
+//    
+//    struct ContainerView: View {
+//        @State private var isEditing = false
+//        var courses = Courses()
+//        let viewModel = CourseViewModel(numberOfWeeks: 13)
+//        var body: some View {
+//            GeometryReader{ geometry in
+//                SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: geometry)
+//            }
+//        }
+//    }
+//}
