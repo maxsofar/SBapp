@@ -12,6 +12,8 @@
 		502E569C2A437C9400DFD6ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 502E569B2A437C9400DFD6ED /* Assets.xcassets */; };
 		502E569F2A437C9400DFD6ED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 502E569E2A437C9400DFD6ED /* Preview Assets.xcassets */; };
 		502E56A82A4380B100DFD6ED /* CoursesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502E56A72A4380B100DFD6ED /* CoursesData.swift */; };
+		503F11112A61877F00A5842F /* FilterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503F11102A61877F00A5842F /* FilterList.swift */; };
+		503F11142A61A08700A5842F /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 503F11132A61A08700A5842F /* SwiftCSV */; };
 		506A8E2A2A50B76F00938555 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506A8E292A50B76F00938555 /* LoginView.swift */; };
 		507D1E332A574368003CB6D4 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D1E322A574368003CB6D4 /* FavoritesView.swift */; };
 		509D7C7A2A4DCBA40029AE46 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509D7C792A4DCBA40029AE46 /* SearchBar.swift */; };
@@ -30,6 +32,7 @@
 		502E569B2A437C9400DFD6ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		502E569E2A437C9400DFD6ED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		502E56A72A4380B100DFD6ED /* CoursesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesData.swift; sourceTree = "<group>"; };
+		503F11102A61877F00A5842F /* FilterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterList.swift; sourceTree = "<group>"; };
 		506A8E292A50B76F00938555 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		507D1E322A574368003CB6D4 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		509D7C792A4DCBA40029AE46 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
@@ -46,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503F11142A61A08700A5842F /* SwiftCSV in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -102,6 +106,7 @@
 			isa = PBXGroup;
 			children = (
 				50F438092A459A2400499500 /* CourseView.swift */,
+				503F11102A61877F00A5842F /* FilterList.swift */,
 				50F4380B2A459AB600499500 /* WeekView.swift */,
 				502E56A72A4380B100DFD6ED /* CoursesData.swift */,
 			);
@@ -137,6 +142,9 @@
 			dependencies = (
 			);
 			name = SBapp;
+			packageProductDependencies = (
+				503F11132A61A08700A5842F /* SwiftCSV */,
+			);
 			productName = SBapp;
 			productReference = 502E56942A437C9300DFD6ED /* Study Buddy.app */;
 			productType = "com.apple.product-type.application";
@@ -165,6 +173,9 @@
 				Base,
 			);
 			mainGroup = 502E568B2A437C9300DFD6ED;
+			packageReferences = (
+				503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+			);
 			productRefGroup = 502E56952A437C9300DFD6ED /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -191,6 +202,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503F11112A61877F00A5842F /* FilterList.swift in Sources */,
 				50AA94902A4EBB080089AB8B /* Title.swift in Sources */,
 				502E569A2A437C9300DFD6ED /* ContentView.swift in Sources */,
 				50F4380C2A459AB600499500 /* WeekView.swift in Sources */,
@@ -403,6 +415,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		503F11132A61A08700A5842F /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 502E568C2A437C9300DFD6ED /* Project object */;
 }

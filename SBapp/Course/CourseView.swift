@@ -46,20 +46,13 @@ class CourseViewModel: ObservableObject {
 }
 
 
-
-
 struct CourseView: View {
+    let course: Course
+    @State var selectedTag: String?
+    @State var showingModal = false
+    @Environment(\.colorScheme) var colorScheme
     @ObservedObject var viewModel: CourseViewModel
-    @State private var showingModal = false
-    @Environment (\.colorScheme) var colorScheme
-    @ObservedObject var course: Course
-    @State private var selectedTag: String?
-    
-    init(course: Course, selectedTag: String? = nil, viewModel: CourseViewModel) {
-        self.viewModel = viewModel
-        self.course = course
-    }
-    
+
     var body: some View {
         ScrollView {
             VStack {
@@ -68,138 +61,90 @@ struct CourseView: View {
                         // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
                         EmptyView()
                     } else {
-                        DisclosureGroup {
-                            WeekView(tag: course.getTags(week: weekNumber))
-                                .padding([.vertical], 30)
-                                .padding([.horizontal], 10)
-                        } label: {
-                            HStack {
-                                Toggle(isOn: Binding(
-                                    get: { viewModel.getIsComplete(for: course)[weekNumber - 1] },
-                                    set: { newValue in
-                                        var isComplete = viewModel.getIsComplete(for: course)
-                                        isComplete[weekNumber - 1] = newValue
-                                        viewModel.setIsComplete(isComplete, for: course)
-                                    }
-                                )) {}
-                                    .toggleStyle(ChecklistToggleStyle())
-                                Spacer()
-                                Text("Week \(weekNumber)")
-                                    .frame(width: 75)
-                                    .font(.title3)
-                                    .foregroundColor ({
-                                        if (!viewModel.getIsComplete(for: course)[weekNumber - 1]) {
-                                            return colorScheme == .dark ? Color.white : Color.black
-                                        } else {
-                                            return Color.gray
-                                        }
-                                    }())
-                                Spacer()
-                                
-                            }
-                        }
-                        .padding([.horizontal], 10)
-                        .padding([.vertical], 10)
-                        .frame(maxWidth: .infinity)
-                        .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
-                        .cornerRadius(10)
-                        //                    .shadow(color: Color.black.opacity(0.2), radius: 5, x: 0, y: 2)
+                        weekDisclosureGroup(weekNumber: weekNumber)
                     }
                 }
             }
-            .padding([.vertical], 30)
-            .padding([.horizontal], 10)
+            .padding(.vertical, 30)
+            .padding(.horizontal, 10)
         }
         .background(colorScheme == .dark ? Color.clear : Color.init(white: 0.95))
         .navigationTitle(course.getName())
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItemGroup {
-                Button{
-                    let generator = UIImpactFeedbackGenerator(style: .light)
-                    generator.impactOccurred()
-                    course.makeFavorite()
-                } label: {
-                    Image(systemName: course.isFavorite ? "star.fill" : "star")
-                        .scaleEffect(1.2)
-                }
-                Button() {
-                    showingModal.toggle()
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                        .scaleEffect(1.2)
-                }
-                .sheet(isPresented: $showingModal) {
-                    VStack(alignment: .leading) {
-                        Text("Filter by Topic")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding([.horizontal], 30)
-                            .padding([.top], 40)
-                        List {
-                            Section {
-                                Button {
-                                    selectedTag = nil
-                                    showingModal = false
-                                } label: {
-                                    HStack {
-                                        Text("All")
-                                            .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                        if selectedTag == nil {
-                                            Spacer()
-                                            Image(systemName: "checkmark")
-                                        }
-                                    }
-                                }
-                            }
-                            ForEach(0..<max(course.lectureTags.count, course.tutorialTags.count), id: \.self) { index in
-                                if index < course.lectureTags.count {
-                                    Button {
-                                        selectedTag = course.lectureTags[index]
-                                        showingModal = false
-                                    } label: {
-                                        HStack {
-                                            Text(course.lectureTags[index])
-                                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                            if selectedTag == course.lectureTags[index] {
-                                                Spacer()
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    }
-                                }
-                                if index < course.tutorialTags.count {
-                                    Button {
-                                        selectedTag = course.lectureTags[index]
-                                        showingModal = false
-                                    } label: {
-                                        HStack {
-                                            Text(course.tutorialTags[index])
-                                                .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
-                                            if selectedTag == course.tutorialTags[index] {
-                                                Spacer()
-                                                Image(systemName: "checkmark")
-                                            }
-                                        }
-                                    }
-                                    
-                                }
-                            }
-                        }
-                        
-                        .padding([.top], -20)
-                    }
-                    .background(colorScheme == .light ? Color(UIColor.secondarySystemBackground) : Color(UIColor.systemGroupedBackground)) 
-                }
+                favoriteButton
+                filterButton
             }
+        }
+    }
+
+    private func weekDisclosureGroup(weekNumber: Int) -> some View {
+        DisclosureGroup {
+            WeekView(tag: course.getTags(week: weekNumber))
+                .padding(.vertical, 30)
+                .padding(.horizontal, 10)
+        } label: {
+            HStack {
+                Toggle(isOn: Binding(
+                    get: { viewModel.getIsComplete(for: course)[weekNumber - 1] },
+                    set: { newValue in
+                        var isComplete = viewModel.getIsComplete(for: course)
+                        isComplete[weekNumber - 1] = newValue
+                        viewModel.setIsComplete(isComplete, for: course)
+                    }
+                )) {}
+                    .toggleStyle(ChecklistToggleStyle())
+                Spacer()
+                Text("Week \(weekNumber)")
+                    .frame(width: 75)
+                    .font(.title3)
+                    .foregroundColor ({
+                        if (!viewModel.getIsComplete(for: course)[weekNumber - 1]) {
+                            return colorScheme == .dark ? Color.white : Color.black
+                        } else {
+                            return Color.gray
+                        }
+                    }())
+                Spacer()
+                
+            }
+        }
+        .padding(10)
+        .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
+        .cornerRadius(10)
+        
+    }
+
+    private var favoriteButton: some View {
+        Button{
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+            course.makeFavorite()
+        } label: {
+            Image(systemName: course.isFavorite ? "star.fill" : "star")
+                .scaleEffect(1.2)
+        }
+    }
+
+    private var filterButton: some View {
+        Button() {
+            showingModal.toggle()
+        } label: {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .scaleEffect(1.2)
+        }
+        .sheet(isPresented: $showingModal) {
+            FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal)
         }
     }
 }
 
-//struct CourseView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        let matam = Course(id: 11, name: "Matam")
-//        let viewModel = CourseViewModel(numberOfWeeks: 13)
-//        CourseView(course: matam, viewModel: viewModel)
-//    }
-//}
+
+struct CourseView_Previews: PreviewProvider {
+    static var previews: some View {
+        let matam = Course(id: 11, name: "Matam")
+        let viewModel = CourseViewModel(numberOfWeeks: 13)
+        CourseView(course: matam, viewModel: viewModel)
+    }
+}
