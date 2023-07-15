@@ -10,12 +10,12 @@ import SwiftUI
 struct FavoritesView: View {
      @ObservedObject var courses: Courses
      @State private var favoriteCourses: [Course] = []
-     let viewModel: CourseViewModel
+//     let viewModel: CourseViewModel
 
      var body: some View {
          VStack {
              List (favoriteCourses) { course in
-                 NavigationLink(destination: CourseView(course: course, viewModel: viewModel)) {
+                 NavigationLink(destination: CourseView(course: course)) {
                      Text(course.name)
                  }
              }
@@ -28,10 +28,10 @@ struct FavoritesView: View {
      }
  }
 
-struct FavoritesView_Previews: PreviewProvider {
-    static var previews: some View {
-        @StateObject var courses = Courses()
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        return FavoritesView(courses: courses, viewModel: viewModel)
-    }
-}
+//struct FavoritesView_Previews: PreviewProvider {
+//    static var previews: some View {
+////        @StateObject var courses = Courses()
+//        let viewModel = CourseViewModel(numberOfWeeks: 13)
+//        return FavoritesView(viewModel: viewModel)
+//    }
+//}

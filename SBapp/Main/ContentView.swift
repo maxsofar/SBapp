@@ -8,29 +8,33 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var courses = Courses()
+    @StateObject private var courses = Courses()
     @State private var isEditing = false
-    @Namespace private var searchTransition
+//    @Namespace private var searchTransition
     @State private var selectedTag: String?
-    @StateObject var viewModel = CourseViewModel(numberOfWeeks: 13)
-    let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
         NavigationStack {
             GeometryReader { vGeometry in
                 VStack() {
                     if !isEditing {
-                        MainViewToolbar(courses: courses, viewModel: viewModel)
+                        MainViewToolbar(courses: courses)
                         Title()
                             .aspectRatio(CGSize(width: 15, height: 3), contentMode: .fit)
                             .padding(20)
-                            
                     }
-                    SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: vGeometry, viewModel: viewModel)
+                    SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: vGeometry)
+                        
+                }
+            }
+            .onAppear {
+                if courses.courses.isEmpty {
+                courses.loadCourses(from: csvURL)
                 }
             }
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
+        
     }
 }
 
@@ -40,7 +44,4 @@ struct ContentView_Previews: PreviewProvider {
     }
 }
 
-func dismissKeyboard() {
-    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-}
 

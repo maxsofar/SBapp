@@ -42,8 +42,13 @@ struct FilterList: View {
             showingModal = false
         } label: {
             HStack {
-                Text(title)
-                    .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                if title == "All" {
+                    Text(LocalizedStringKey(title))
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                } else {
+                    Text(title)
+                        .foregroundColor(colorScheme == .dark ? Color.white : Color.black)
+                }
                 if selectedTag == tag {
                     Spacer()
                     Image(systemName: "checkmark")
@@ -57,10 +62,10 @@ struct FilterList: View {
 
 
 
-struct FilterList_Previews: PreviewProvider {
-    static var previews: some View {
-        @State var selectedTag: String?
-        @State  var showingModal = false
-        FilterList(course: Courses().courses[0], selectedTag: $selectedTag, showingModal: $showingModal)
-    }
-}
+//struct FilterList_Previews: PreviewProvider {
+//    static var previews: some View {
+//        @State var selectedTag: String?
+//        @State  var showingModal = false
+//        FilterList(course: coursesList[0], selectedTag: $selectedTag, showingModal: $showingModal)
+//    }
+//}

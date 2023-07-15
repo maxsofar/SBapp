@@ -9,12 +9,12 @@ import SwiftUI
 
 struct MainViewToolbar: View {
     @ObservedObject var courses: Courses
-    var viewModel: CourseViewModel
+//    var viewModel: CourseViewModel
     
     var body: some View {
         HStack {
             NavigationLink {
-                FavoritesView(courses: courses, viewModel: viewModel)
+                FavoritesView(courses: courses)
             } label: {
                 Image(systemName: "star.circle")
                     .scaleEffect(1.8)
@@ -37,14 +37,8 @@ struct MainViewToolbar: View {
 
 struct MainViewToolbar_Previews: PreviewProvider {
     static var previews: some View {
-        ContainerView()
-            .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
-    }
-    struct ContainerView: View {
-        @StateObject var courses = Courses()
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        var body: some View {
-            MainViewToolbar(courses: courses, viewModel: viewModel)
-        }
+        let previewCourses = Courses()
+        return MainViewToolbar(courses: previewCourses)
+                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
     }
 }

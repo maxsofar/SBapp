@@ -23,36 +23,12 @@ struct ChecklistToggleStyle: ToggleStyle {
     }
 }
 
-class CourseViewModel: ObservableObject {
-    @Published var isComplete: [String: [Bool]] {
-        didSet {
-            // Save the state of isComplete to UserDefaults when it changes
-            UserDefaults.standard.set(isComplete, forKey: "isComplete")
-        }
-    }
-
-    init(numberOfWeeks: Int) {
-        // Load the state of isComplete from UserDefaults when the viewModel is initialized
-        self.isComplete = UserDefaults.standard.dictionary(forKey: "isComplete") as? [String: [Bool]] ?? [:]
-    }
-    
-    func getIsComplete(for course: Course) -> [Bool] {
-        return isComplete[String(course.id)] ?? Array(repeating: false, count: 13)
-    }
-    
-    func setIsComplete(_ value: [Bool], for course: Course) {
-        isComplete[String(course.id)] = value
-    }
-}
-
-
 struct CourseView: View {
-    let course: Course
+    @ObservedObject var course: Course
     @State var selectedTag: String?
     @State var showingModal = false
     @Environment(\.colorScheme) var colorScheme
-    @ObservedObject var viewModel: CourseViewModel
-
+    
     var body: some View {
         ScrollView {
             VStack {
@@ -78,7 +54,7 @@ struct CourseView: View {
             }
         }
     }
-
+    
     private func weekDisclosureGroup(weekNumber: Int) -> some View {
         DisclosureGroup {
             WeekView(tag: course.getTags(week: weekNumber))
@@ -87,20 +63,20 @@ struct CourseView: View {
         } label: {
             HStack {
                 Toggle(isOn: Binding(
-                    get: { viewModel.getIsComplete(for: course)[weekNumber - 1] },
+                    get: { course.getIsComplete(for: weekNumber) },
                     set: { newValue in
-                        var isComplete = viewModel.getIsComplete(for: course)
-                        isComplete[weekNumber - 1] = newValue
-                        viewModel.setIsComplete(isComplete, for: course)
+                        course.setIsComplete(newValue, for: weekNumber)
                     }
                 )) {}
-                    .toggleStyle(ChecklistToggleStyle())
+                .toggleStyle(ChecklistToggleStyle())
+
                 Spacer()
-                Text("Week \(weekNumber)")
+                let localizedWeekString = NSLocalizedString("Week", comment: "")
+                Text(localizedWeekString + " \(weekNumber)")
                     .frame(width: 75)
                     .font(.title3)
                     .foregroundColor ({
-                        if (!viewModel.getIsComplete(for: course)[weekNumber - 1]) {
+                        if (!course.getIsComplete(for: weekNumber)) {
                             return colorScheme == .dark ? Color.white : Color.black
                         } else {
                             return Color.gray
@@ -113,9 +89,7 @@ struct CourseView: View {
         .padding(10)
         .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
         .cornerRadius(10)
-        
     }
-
     private var favoriteButton: some View {
         Button{
             let generator = UIImpactFeedbackGenerator(style: .light)
@@ -126,7 +100,7 @@ struct CourseView: View {
                 .scaleEffect(1.2)
         }
     }
-
+    
     private var filterButton: some View {
         Button() {
             showingModal.toggle()
@@ -141,10 +115,10 @@ struct CourseView: View {
 }
 
 
-struct CourseView_Previews: PreviewProvider {
-    static var previews: some View {
-        let matam = Course(id: 11, name: "Matam")
-        let viewModel = CourseViewModel(numberOfWeeks: 13)
-        CourseView(course: matam, viewModel: viewModel)
-    }
-}
+//struct CourseView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        let matam = Course(id: 11, name: "Matam")
+////        let viewModel = CourseViewModel(numberOfWeeks: 13)
+//        CourseView(course: matam, courses: Courses)
+//    }
+//}

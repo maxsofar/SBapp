@@ -7,6 +7,11 @@
 
 import SwiftUI
 
+func dismissKeyboard() {
+    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+}
+
+
 struct SearchBarButtons: View {
     @Environment(\.colorScheme) var colorScheme
     @Binding var isEditing: Bool
