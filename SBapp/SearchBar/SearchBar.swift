@@ -9,17 +9,17 @@ import SwiftUI
 
 struct SearchBar: View {
     @Environment(\.colorScheme) var colorScheme
+    @ObservedObject var courses: Courses
     @Binding var isEditing: Bool
     @State var backButton = false
     @State var searchText = ""
-    @ObservedObject var courses: Courses
     @State private var searchResults: [Course] = []
     @FocusState  var textFieldIsFocused: Bool
     @State private var alignment: Bool = false
     @State private var phase: CGFloat = 165
     @State var showList = false
     var geoHeight: CGFloat
-    @ObservedObject var viewModel: CourseViewModel
+//    @Namespace private var searchTransition
     
     var body: some View {
         VStack {
@@ -47,26 +47,17 @@ struct SearchBar: View {
                                 RoundedRectangle(cornerRadius: 25)
                                     .strokeBorder(.blue, style: StrokeStyle(lineWidth: 4, dash: [100, 1000], dashPhase: phase))
                             )
-                            .padding([.horizontal], 5)
+                            .padding(.horizontal, 5)
                         TextField("Enter course name or id", text: $searchText)
                             .font(.title2)
                             .disableAutocorrection(true)
                             .allowsHitTesting(false)
                             .multilineTextAlignment(isEditing ? .leading : .center)
-                            .padding([.horizontal], 40)
+                            .padding(.horizontal, 40)
                             .focused($textFieldIsFocused)
-                            .onAppear {
-                                searchResults = courses.courses
-                            }
-                            .onChange(of: searchText) { newValue in
-                                // Perform the search using searchText
-                                searchResults = courses.courses.filter { course in
-                                    course.name.lowercased().starts(with: searchText.lowercased()) || String(course.id).starts(with: searchText)
-                                }
-                            }
                             .submitLabel(.search)
                             .onSubmit {
-                                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                                dismissKeyboard()
                             }
                         SearchBarButtons(
                             isEditing: $isEditing,
@@ -75,15 +66,29 @@ struct SearchBar: View {
                             alignment: $alignment,
                             showList: $showList
                         )
-                            .padding([.horizontal], 20)
+                            .padding(.horizontal, 20)
                     }
                 }
+                .onChange(of: searchText) { newValue in
+                    // Update the searchResults property when the searchText property changes
+                    searchResults = courses.courses.filter { course in
+                        course.name.lowercased().starts(with: searchText.lowercased()) || String(course.id).starts(with: searchText)
+                    }
+                }
+                .onChange(of: courses.courses) { newValue in
+                    // Update the searchResults property when the courses.courses property changes
+                    searchResults = courses.courses.filter { course in
+                        course.name.lowercased().starts(with: searchText.lowercased()) || String(course.id).starts(with: searchText)
+                    }
+                }
+                .onAppear{searchResults = courses.courses}
+
             }
             .frame(height: geoHeight)
             if showList {
                 List(searchResults) { course in
                     NavigationLink(destination:
-                        CourseView(course: course, viewModel: viewModel)
+                        CourseView(course: course)
                     ) {
                         Text(course.name)
                     }
@@ -93,24 +98,26 @@ struct SearchBar: View {
     }
 }
 
-//struct SearchBar_Previews: PreviewProvider {
-//    @State private var isEditing = false
-//    static var previews: some View {
-//        ContainerView()
-//    }
-//    
-//    struct ContainerView: View {
-//        @State private var isEditing = false
-//        @State private var backButton = false
-//        @State private var isListShown = false
-//        @State var searchResults: [Course] = []
-//        var courses = Courses()
-//        @StateObject var viewModel = CourseViewModel(numberOfWeeks: 13)
-//        var body: some View {
-//            GeometryReader{ geometry in
-//                SearchBar(isEditing: $isEditing, courses: courses, geoHeight: geometry.size.height * 0.08)
-//                    .environmentObject(viewModel)
-//            }
-//        }
-//    }
-//}
+struct SearchBar_Previews: PreviewProvider {
+    static var previews: some View {
+        @State var isEditing = false
+        @State var backButton = false
+        @State var isListShown = false
+        @State var searchResults: [Course] = []
+        let previewCourses = Courses()
+        previewCourses.courses = [
+                Course(id: 11, name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
+                Course(id: 12, name: "Infi1"),
+                Course(id: 13, name: "Physics1m")
+            ]
+        return SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
+    }
+}
+
+
+public extension UITextField {
+    override var textInputMode: UITextInputMode? {
+        let locale = Locale(identifier: "he-IL")
+        return UITextInputMode.activeInputModes.first(where: { $0.primaryLanguage == locale.identifier }) ?? super.textInputMode
+    }
+}

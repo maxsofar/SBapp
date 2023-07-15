@@ -12,9 +12,12 @@
 		502E569C2A437C9400DFD6ED /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 502E569B2A437C9400DFD6ED /* Assets.xcassets */; };
 		502E569F2A437C9400DFD6ED /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 502E569E2A437C9400DFD6ED /* Preview Assets.xcassets */; };
 		502E56A82A4380B100DFD6ED /* CoursesData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 502E56A72A4380B100DFD6ED /* CoursesData.swift */; };
+		503F11112A61877F00A5842F /* FilterList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 503F11102A61877F00A5842F /* FilterList.swift */; };
+		503F11142A61A08700A5842F /* SwiftCSV in Frameworks */ = {isa = PBXBuildFile; productRef = 503F11132A61A08700A5842F /* SwiftCSV */; };
 		506A8E2A2A50B76F00938555 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506A8E292A50B76F00938555 /* LoginView.swift */; };
 		507D1E332A574368003CB6D4 /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D1E322A574368003CB6D4 /* FavoritesView.swift */; };
 		509D7C7A2A4DCBA40029AE46 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509D7C792A4DCBA40029AE46 /* SearchBar.swift */; };
+		50A042F52A62946A00F9E50A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 50A042F72A62946A00F9E50A /* Localizable.strings */; };
 		50AA94902A4EBB080089AB8B /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA948F2A4EBB080089AB8B /* Title.swift */; };
 		50DF13262A4F05CD00CBCC14 /* SearchBarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */; };
 		50E1A5122A5D779C007E8C21 /* MainViewToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */; };
@@ -30,9 +33,12 @@
 		502E569B2A437C9400DFD6ED /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		502E569E2A437C9400DFD6ED /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		502E56A72A4380B100DFD6ED /* CoursesData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursesData.swift; sourceTree = "<group>"; };
+		503F11102A61877F00A5842F /* FilterList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterList.swift; sourceTree = "<group>"; };
 		506A8E292A50B76F00938555 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		507D1E322A574368003CB6D4 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		509D7C792A4DCBA40029AE46 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
+		50A042F62A62946A00F9E50A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		50A042F82A62959500F9E50A /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
 		50AA948F2A4EBB080089AB8B /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarButtons.swift; sourceTree = "<group>"; };
 		50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewToolbar.swift; sourceTree = "<group>"; };
@@ -46,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503F11142A61A08700A5842F /* SwiftCSV in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,6 +62,7 @@
 		502E568B2A437C9300DFD6ED = {
 			isa = PBXGroup;
 			children = (
+				50A042F72A62946A00F9E50A /* Localizable.strings */,
 				502E56962A437C9300DFD6ED /* SBapp */,
 				502E56952A437C9300DFD6ED /* Products */,
 			);
@@ -102,6 +110,7 @@
 			isa = PBXGroup;
 			children = (
 				50F438092A459A2400499500 /* CourseView.swift */,
+				503F11102A61877F00A5842F /* FilterList.swift */,
 				50F4380B2A459AB600499500 /* WeekView.swift */,
 				502E56A72A4380B100DFD6ED /* CoursesData.swift */,
 			);
@@ -111,12 +120,12 @@
 		50E1A5132A5D897A007E8C21 /* Main */ = {
 			isa = PBXGroup;
 			children = (
-				50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */,
 				502E56992A437C9300DFD6ED /* ContentView.swift */,
-				50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */,
 				507D1E322A574368003CB6D4 /* FavoritesView.swift */,
-				50AA948F2A4EBB080089AB8B /* Title.swift */,
 				506A8E292A50B76F00938555 /* LoginView.swift */,
+				50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */,
+				50F76D6E2A5DF57400CABE11 /* SearchBarMain.swift */,
+				50AA948F2A4EBB080089AB8B /* Title.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -137,6 +146,9 @@
 			dependencies = (
 			);
 			name = SBapp;
+			packageProductDependencies = (
+				503F11132A61A08700A5842F /* SwiftCSV */,
+			);
 			productName = SBapp;
 			productReference = 502E56942A437C9300DFD6ED /* Study Buddy.app */;
 			productType = "com.apple.product-type.application";
@@ -161,10 +173,14 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				he,
 				en,
 				Base,
 			);
 			mainGroup = 502E568B2A437C9300DFD6ED;
+			packageReferences = (
+				503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+			);
 			productRefGroup = 502E56952A437C9300DFD6ED /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -180,6 +196,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				502E569F2A437C9400DFD6ED /* Preview Assets.xcassets in Resources */,
+				50A042F52A62946A00F9E50A /* Localizable.strings in Resources */,
 				502E569C2A437C9400DFD6ED /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -191,6 +208,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				503F11112A61877F00A5842F /* FilterList.swift in Sources */,
 				50AA94902A4EBB080089AB8B /* Title.swift in Sources */,
 				502E569A2A437C9300DFD6ED /* ContentView.swift in Sources */,
 				50F4380C2A459AB600499500 /* WeekView.swift in Sources */,
@@ -208,11 +226,24 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		50A042F72A62946A00F9E50A /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				50A042F62A62946A00F9E50A /* en */,
+				50A042F82A62959500F9E50A /* he */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		502E56A02A437C9400DFD6ED /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -273,6 +304,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -403,6 +435,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/swiftcsv/SwiftCSV.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		503F11132A61A08700A5842F /* SwiftCSV */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */;
+			productName = SwiftCSV;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 502E568C2A437C9300DFD6ED /* Project object */;
 }

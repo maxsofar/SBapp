@@ -12,7 +12,7 @@ struct SearchBarMain: View {
     @Binding var isEditing: Bool
     @Namespace var searchTransition
     var vGeometry: GeometryProxy
-    @ObservedObject var viewModel: CourseViewModel
+//    @ObservedObject var viewModel: CourseViewModel
     let screenWidth = UIScreen.main.bounds.width
     
     var body: some View {
@@ -25,12 +25,10 @@ struct SearchBarMain: View {
                         .aspectRatio(contentMode: .fit)
                 }
                 SearchBar(
-                    isEditing: $isEditing,
                     courses: courses,
-                    geoHeight:  vGeometry.size.height * 0.08,
-                    viewModel: viewModel
+                    isEditing: $isEditing,
+                    geoHeight:  vGeometry.size.height * 0.08
                 )
-                .environmentObject(viewModel)
                 .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 

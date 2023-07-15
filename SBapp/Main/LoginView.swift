@@ -86,24 +86,35 @@ struct LoginView: View {
                         ZStack {
                             RoundedRectangle(cornerRadius: 15)
                                 .frame(width: geometry.size.width * 0.9, height: 55)
-                            Text(signUp ? "Sign Up" : "Log In")
+                            Text(signUp
+                                 ? NSLocalizedString("Sign Up (Verb)", comment: "Verb")
+                                 : NSLocalizedString("Log In (Verb)", comment: "Verb")
+                            )
                                 .foregroundColor(.white)
                                 .font(.title)
                         }
                     }
                     .padding([.top], 50)
                     HStack {
-                        Text(signUp ? "Already Registered?" : "Want to Join?")
+                        Text(signUp ? "Already registered?" : "Not yet registered?")
                             .font(.title3)
-                        Button (signUp ? "Log In" : "Sign Up"){
+                        Button {
                             signUp.toggle()
+                        } label: {
+                                Text(signUp
+                                    ? NSLocalizedString("Log In (Adverb)", comment: "Adverb")
+                                    : NSLocalizedString("Sign Up (Adverb)", comment: "Adverb"))
+                                .font(.title3)
                         }
-                        .font(.title3)
+                        
                         .foregroundColor(.blue)
                     }
                     .padding([.top], 30)
                 }
-                .navigationTitle("Login")
+                .navigationTitle(signUp
+                                 ? Text(NSLocalizedString("Sign Up (Noun)", comment: "Noun"))
+                                 : Text(NSLocalizedString("Log In (Noun)", comment: "Noun"))
+                )
                 .navigationBarTitleDisplayMode(.large)
             }
         }
