@@ -41,7 +41,7 @@ struct SearchBar: View {
                     }
                 } label: {
                     ZStack {
-                        Capsule(style: .continuous)
+                        Capsule(style: .circular)
                             .fill(colorScheme == .dark ? Color.init(white: 0.3) : Color.init(white: 0.9))
                             .overlay(
                                 RoundedRectangle(cornerRadius: 25)
@@ -82,7 +82,6 @@ struct SearchBar: View {
                     }
                 }
                 .onAppear{searchResults = courses.courses}
-
             }
             .frame(height: geoHeight)
             if showList {
@@ -106,9 +105,9 @@ struct SearchBar_Previews: PreviewProvider {
         @State var searchResults: [Course] = []
         let previewCourses = Courses()
         previewCourses.courses = [
-                Course(id: 11, name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
-                Course(id: 12, name: "Infi1"),
-                Course(id: 13, name: "Physics1m")
+                Course(id: "11", name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
+                Course(id: "12", name: "Infi1"),
+                Course(id: "13", name: "Physics1m")
             ]
         return SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
     }

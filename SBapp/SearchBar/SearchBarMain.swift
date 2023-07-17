@@ -43,19 +43,18 @@ struct SearchBarMain: View {
     }
 }
 
-//struct SearchBarMain_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContainerView()
-//    }
-//    
-//    struct ContainerView: View {
-//        @State private var isEditing = false
-//        var courses = Courses()
-//        let viewModel = CourseViewModel(numberOfWeeks: 13)
-//        var body: some View {
-//            GeometryReader{ geometry in
-//                SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: geometry)
-//            }
-//        }
-//    }
-//}
+struct SearchBarMain_Previews: PreviewProvider {
+    static var previews: some View {
+        ContainerView()
+    }
+    
+    struct ContainerView: View {
+        @State private var isEditing = false
+        var courses = Courses()
+        var body: some View {
+            GeometryReader{ geometry in
+                SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: geometry)
+            }
+        }
+    }
+}
