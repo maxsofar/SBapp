@@ -7,53 +7,144 @@
 
 import SwiftUI
 
-struct WeekView: View {
-    let tag: (lecture: String?, tutorial: String?)
+struct AutoColorGroupBoxStyle: GroupBoxStyle {
+    @Environment(\.colorScheme) var colorScheme
     
-//    init(
-//        (lectureTag: String,
-//        lectureTag: String)
-//    ) {
-//        self.lectureTags = lectureTags
-//        self.tutorialTags = tutorialTags
-//    }
+    func makeBody(configuration: Configuration) -> some View {
+        let backgroundColor = colorScheme == .dark
+        ? Color(red: 0.04, green: 0.13, blue: 0.25)
+        : Color(red: 0.78, green: 0.86, blue: 0.9)
+        
+        let foregroundColor = colorScheme == .dark
+        ? Color(red: 0.2, green: 0.55, blue: 0.85)
+        : Color(red: 0, green: 0.3, blue: 0.6)
+        
+        VStack(alignment: .leading) {
+            configuration.label
+            configuration.content
+        }
+        .padding()
+        .background(backgroundColor)
+        .foregroundColor(foregroundColor)
+        .frame(minWidth: 250, maxWidth: 350, minHeight: 150)
+        .cornerRadius(15)
+    }
+}
 
-    var body: some View {
+struct CustomLabelStyle: LabelStyle {
+    @Environment(\.colorScheme) var colorScheme
+    
+    func makeBody(configuration: Configuration) -> some View {
+        let foregroundColor = colorScheme == .dark
+        ? Color(red: 0.05, green: 0.2, blue: 0.4)
+        : Color(red: 0.67, green: 0.8, blue: 0.86)
+        
         HStack {
-            VStack {
-                Link("Lecture", destination: URL(string: "https://technionmail.sharepoint.com/:b:/r/sites/StudyBuddy/Shared%20Documents/114071/Lessons/%D7%94%D7%A8%D7%A6%D7%90%D7%94%201-%2021.10.2020-%20%D7%9E%D7%91%D7%95%D7%90%20%D7%95%D7%90%D7%A0%D7%9C%D7%99%D7%96%D7%AA%20%D7%9E%D7%99%D7%9E%D7%93%D7%99%D7%9D.pdf")!)
-                Spacer()
-                Link("Tutorial", destination: URL(string: "https://technionmail.sharepoint.com/:b:/r/sites/StudyBuddy/Shared%20Documents/114071/Lessons/%D7%AA%D7%A8%D7%92%D7%99%D7%9C%20%D7%9B%D7%99%D7%AA%D7%94%201%20-%20%D7%97%D7%96%D7%A8%D7%94%20%D7%9E%D7%AA%D7%9E%D7%98%D7%99%D7%AA.pdf")!)
-            }
-            Spacer()
-            VStack {
-                Link("Recording", destination: URL(string: "https://panoptotech.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=64d05429-4fa7-4908-9226-ac5b00f3199b")!)
-                Spacer()
-                Link("Recording", destination: URL(string: "https://panoptotech.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=64006b3d-7c73-4816-90d3-ac5c009d71ff")!)
-            }
-            Spacer()
-            VStack {
-                if tag.lecture != nil {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 5)
-                            .foregroundColor(.gray)
-                        Text(tag.lecture!)
-                            .font(.title3)
-                            .foregroundColor(.white)
+            configuration.icon
+            configuration.title
+                .font(.headline)
+        }
+        .padding(15)
+        .background(foregroundColor)
+        .cornerRadius(8)
+    }
+}
+
+
+
+struct WeekView: View {
+    let weekNumber: Int
+    let course: Course
+    @Environment(\.colorScheme) var colorScheme
+    
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                GroupBox(
+                    label: VStack(alignment: .leading) {
+                            Text("Lecture")
+                                .font(.title)
+                                .padding(.bottom, 0.5)
+                                if weekNumber - 1 < course.lectureTags.count {
+                                    let lectureTopic = course.lectureTags[weekNumber - 1]
+                                    Text("\(lectureTopic)")
+                                        .font(.title3)
+                                }
+                            }
+                ) {
+                    HStack() {
+                        
+                        if weekNumber - 1 < course.lectureTags.count {
+                            VStack(alignment: .center) {
+                                ForEach(course.lectureLinks.indices, id: \.self) { index in
+                                    let link = course.lectureLinks[index]
+                                    Link(destination: URL(string: link)!) {
+                                        let localizedLecture = NSLocalizedString("Lecture", comment: "")
+                                        Label(localizedLecture + " \(index + 1)", systemImage: "link")
+                                            .labelStyle(CustomLabelStyle())
+                                    }
+                                }
+                            }
+                            VStack(alignment: .center) {
+                                ForEach(course.lectureRecordingLinks.indices, id: \.self) { index in
+                                    let link = course.lectureRecordingLinks[index]
+                                    Link(destination: URL(string: link)!) {
+                                        let localizedRecording = NSLocalizedString("Recording", comment: "")
+                                        Label(localizedRecording + " \(index + 1)", systemImage: "video")
+                                            .labelStyle(CustomLabelStyle())
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            VStack {
+                                Spacer()
+                            }
+                            Spacer()
+                        }
                     }
-                    .frame(idealWidth: 70, maxWidth: 90, idealHeight: 35, maxHeight: 35)
+                    .padding(.vertical, 10)
                 }
-                if tag.tutorial != nil {
-                    Spacer()
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 5)
-                            .foregroundColor(.gray)
-                        Text(tag.tutorial!)
-                            .font(.title3)
-                            .foregroundColor(.white)
+                .groupBoxStyle(AutoColorGroupBoxStyle())
+                
+                GroupBox(
+                    label: VStack(alignment: .leading) {
+                        Text("Tutorial")
+                            .font(.title)
+                            .padding(.bottom, 0.5)
+                            if weekNumber - 1 < course.tutorialTags.count {
+                                let tutorialTopic = course.tutorialTags[weekNumber - 1]
+                                Text("\(tutorialTopic)")
+                                    .font(.title2)
+                            }
                     }
-                    .frame(idealWidth: 70, maxWidth: 90, idealHeight: 35, maxHeight: 35)
+                ) {
+                    HStack() {
+                        VStack(alignment: .center) {
+                            ForEach(course.tutorialLinks.indices, id: \.self) { index in
+                                let link = course.tutorialLinks[index]
+                                Link(destination: URL(string: link)!) {
+                                    let localizedTutorial = NSLocalizedString("Tutorial", comment: "")
+                                    Label(localizedTutorial + " \(index + 1)", systemImage: "link")
+                                        .labelStyle(CustomLabelStyle())
+                                }
+                            }
+                        }
+                        VStack(alignment: .center) {
+                            ForEach(course.tutorialRecordingLinks.indices, id: \.self) { index in
+                                let link = course.tutorialRecordingLinks[index]
+                                Link(destination: URL(string: link)!) {
+                                    let localizedRecording = NSLocalizedString("Recording", comment: "")
+                                    Label(localizedRecording + " \(index + 1)", systemImage: "video")
+                                        .labelStyle(CustomLabelStyle())
+                                }
+                            }
+                        }
+                        
+                    }
+                    .padding(.vertical, 10)
                 }
+                .groupBoxStyle(AutoColorGroupBoxStyle())
             }
         }
     }
@@ -61,8 +152,10 @@ struct WeekView: View {
 
 struct WeekView_Previews: PreviewProvider {
     static var previews: some View {
-        let tags = ["Atoms", "Leibniz"]
-        WeekView(tag: (tags[0], tags[1]))
-            .frame(width: 380, height: 90)
+//        let tags = ["Atoms", "Leibniz"]
+//        WeekView(tag: (tags[0], tags[1]))
+//            .frame(width: 380, height: 90)
+        WeekView(weekNumber: 1, course: testCourses[0])
+            .frame(width: 380, height: 300)
     }
 }

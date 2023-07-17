@@ -1,0 +1,29 @@
+/*
+  Localizable.strings
+  SBapp
+
+  Created by Max on 15/07/2023.
+  
+*/
+
+"Log In (Noun)" = "התחברות";
+"Log In (Verb)" = "התחבר";
+"Log In (Adverb)" = "להתחברות";
+"Sign Up (Noun)" = "הרשמה";
+"Sign Up (Verb)" = "הירשם";
+"Sign Up (Adverb)" = "להרשמה";
+"Not yet registered?" = "עוד לא הצטרפת?";
+"Already registered?" = "כבר נרשמת?";
+"Email" = "דוא\"ל";
+"Password" = "סיסמה";
+"Favorites" = "מועדפים";
+"Enter course name or id" = "הכנס שם או מספר הקורס";
+"Week" = "שבוע";
+"Filter by Topic" = "סנן לפי נושא";
+"All" = "הכל";
+"Lecture" = "הרצאה";
+"Tutorial" = "תרגול";
+"Recording" = "הקלטה";
+"Lessons" = "שיעורים";
+"Exams" = "מבחנים";
+

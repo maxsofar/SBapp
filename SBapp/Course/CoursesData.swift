@@ -12,10 +12,14 @@ import SwiftCSV
 // URL of the CSV file on GitHub
 let csvURL = URL(string: "https://raw.githubusercontent.com/Cyanivde/StudyBuddy/main/courses.csv")!
 
-
+struct Exam: Hashable {
+    let year: String
+    let semester: String
+    let links: [String]
+}
 
 class Course : ObservableObject, Identifiable, Equatable {
-    let id: Int
+    let id: String
     let name: String
     @Published var isFavorite: Bool {
         didSet {
@@ -35,12 +39,23 @@ class Course : ObservableObject, Identifiable, Equatable {
         }
     }
     
+    let lectureLinks: [String]
+    let lectureRecordingLinks: [String]
+    let tutorialLinks: [String]
+    let tutorialRecordingLinks: [String]
+    let exams: [Exam]
+    
     init(
-        id: Int,
+        id: String,
         name: String,
         isFavorite: Bool = false,
         lectureTags: [String] = [],
-        tutorialTags: [String] = []
+        tutorialTags: [String] = [],
+        lectureLinks: [String] = [],
+        lectureRecordingLinks: [String] = [],
+        tutorialLinks: [String] = [],
+        tutorialRecordingLinks: [String] = [],
+        exams: [Exam] = []
     ) {
         
         self.id = id
@@ -55,24 +70,26 @@ class Course : ObservableObject, Identifiable, Equatable {
         // Load the state of isComplete from UserDefaults when the course is initialized
         let completeKey = "isComplete_\(id)"
         self.isComplete = UserDefaults.standard.array(forKey: completeKey) as? [Bool] ?? Array(repeating: false, count: 13)
+        
+        // Initialize the lecture and tutorial links
+        self.lectureLinks = lectureLinks
+        self.lectureRecordingLinks = lectureRecordingLinks
+        self.tutorialLinks = tutorialLinks
+        self.tutorialRecordingLinks = tutorialRecordingLinks
+        
+        // Initialize exams
+        self.exams = exams
     }
 }
 
+
 extension Course {
     static func == (lhs: Course, rhs: Course) -> Bool {
-            return lhs.id == rhs.id && lhs.name == rhs.name && lhs.isFavorite == rhs.isFavorite
-        }
+       return lhs.id == rhs.id
+   }
     
     func makeFavorite() {
         isFavorite.toggle()
-    }
-    
-    func isCourseFavorite() -> Bool {
-        isFavorite
-    }
-    
-    func getName() -> String {
-        name
     }
     
     func getTags(week: Int) -> (lecture: String?, tutorial: String?) {
@@ -128,9 +145,21 @@ class Courses: ObservableObject {
             // Create an array of Course objects from the CSV data
             var courses = [Course]()
             for i in 0..<courseInstituteIDs.count {
-                let id = Int(courseInstituteIDs[i])!
+                let id = courseInstituteIDs[i]
                 let name = courseNames[i]
-                let course = Course(id: id, name: name)
+//                let course = Course(id: id, name: name)
+                let courseData = testCourses[i % testCourses.count]
+                let course = Course(
+                    id: id,
+                    name: name,
+                    lectureTags: courseData.lectureTags,
+                    tutorialTags: courseData.tutorialTags,
+                    lectureLinks: courseData.lectureLinks,
+                    lectureRecordingLinks: courseData.lectureRecordingLinks,
+                    tutorialLinks: courseData.tutorialLinks,
+                    tutorialRecordingLinks: courseData.tutorialRecordingLinks,
+                    exams: testExams
+                )
                 courses.append(course)
             }
             
@@ -153,17 +182,86 @@ class Courses: ObservableObject {
                     let name = courseData.name
                     let key = "isFavorite_\(id)"
                     let isFavorite = UserDefaults.standard.bool(forKey: key)
-                    return Course(id: id, name: name, isFavorite: isFavorite)
+                    return Course(
+                       id: id,
+                       name: name,
+                       isFavorite: isFavorite,
+                       lectureTags: courseData.lectureTags,
+                       tutorialTags: courseData.tutorialTags,
+                       lectureLinks: courseData.lectureLinks,
+                       lectureRecordingLinks: courseData.lectureRecordingLinks,
+                       tutorialLinks: courseData.tutorialLinks,
+                       tutorialRecordingLinks: courseData.tutorialRecordingLinks,
+                       exams: courseData.exams
+                   )
+//                    return Course(id: id, name: name, isFavorite: isFavorite)
                 }
             }
         }
     }
 }
 
+// Dummy data for exams
+let testExams = [
+    Exam(year: "2022", semester: "Fall", links: ["https://example.com/exam1", "https://example.com/exam2"]),
+    Exam(year: "2022", semester: "Spring", links: ["https://example.com/exam3", "https://example.com/exam4"]),
+    Exam(year: "2021", semester: "Fall", links: ["https://example.com/exam5", "https://example.com/exam6"]),
+    Exam(year: "2021", semester: "Spring", links: ["https://example.com/exam7", "https://example.com/exam8"])
+]
+
+let testCourses = [
+    Course(id: "1",
+           name: "מתמטיקה",
+           lectureTags: ["אלגברה", "חשבון", "גיאומטריה", "טריגונומטריה", "סטטיסטיקה"],
+           tutorialTags: ["בעיות אלגברה", "בעיות חשבון", "בעיות גיאומטריה", "בעיות טריגונומטריה", "בעיות סטטיסטיקה"],
+           lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
+           lectureRecordingLinks: ["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink2.com"],
+           tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
+           tutorialRecordingLinks: ["https://mathtutorialrecordinglink1.com", "https://mathtutorialrecordinglink2.com"]),
+    Course(id: "2",
+           name: "פיזיקה",
+           lectureTags: ["מכניקה", "תרמודינמיקה", "אלקטרומגנטיות", "אופטיקה", "מכניקה קוונטית"],
+           tutorialTags: ["בעיות מכניקה", "בעיות תרמודינמיקה", "בעיות אלקטרומגנטיות", "בעיות אופטיקה", "בעיות מכניקה קוונטית"],
+           lectureLinks: ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
+           lectureRecordingLinks: ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"],
+           tutorialLinks: ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
+           tutorialRecordingLinks: ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]),
+    Course(id: "3",
+           name: "כימיה",
+           lectureTags: ["כימיה אורגנית", "כימיה לא אורגנית", "כימיה פיזיקלית", "ביו-כימיה", "אנליזה כימי"],
+           tutorialTags: ["בעיות כימיה אורגני", "בעיות כимия לא אורגני", "בעיות כמי פיזאלי"," בעיות ביו-חמי"," בעיות אנלאל חמי"],
+           lectureLinks: ["https://chemistrylecturelink1.com", "https://chemistrylecturelink2.com"],
+           lectureRecordingLinks: ["https://chemistrylecturerecordinglink1.com", "https://chemistrylecturerecordinglink2.com"],
+           tutorialLinks: ["https://chemistrytutoriallink1.com", "https://chemistrytutoriallink2.com"],
+           tutorialRecordingLinks: ["https://chemistrytutorialrecordinglink1.com", "https://chemistrytutorialrecordinglink2.com"])
+]
 
 
-//var coursesList = [
-//    Course(id: 11, name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
-//    Course(id: 12, name: "Infi1"),
-//    Course(id: 13, name: "Physics1m")
+//let testCourses = [
+//    Course(id: "1",
+//           name: "Mathematics",
+//           lectureTags: ["Algebra", "Calculus", "Geometry", "Trigonometry", "Statistics"],
+//           tutorialTags: ["Algebra Problems", "Calculus Problems", "Geometry Problems", "Trigonometry Problems", "Statistics Problems"],
+//           lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
+//           lectureRecordingLinks: ["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink2.com"],
+//           tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
+//           tutorialRecordingLinks: ["https://mathtutorialrecordinglink1.com", "https://mathtutorialrecordinglink2.com"]),
+//    Course(id: "2",
+//           name: "Physics",
+//           lectureTags: ["Mechanics", "Thermodynamics", "Electromagnetism", "Optics", "Quantum Mechanics"],
+//           tutorialTags: ["Mechanics Problems", "Thermodynamics Problems", "Electromagnetism Problems", "Optics Problems", "Quantum Mechanics Problems"],
+//           lectureLinks: ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
+//           lectureRecordingLinks: ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"],
+//           tutorialLinks: ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
+//           tutorialRecordingLinks: ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]),
+//    Course(id: "3",
+//           name: "Chemistry",
+//           lectureTags: ["Organic Chemistry", "Inorganic Chemistry", "Physical Chemistry", "Biochemistry", "Analytical Chemistry"],
+//           tutorialTags: ["Organic Chemistry Problems", "Inorganic Chemistry Problems", "Physical Chemistry Problems", "Biochemistry Problems", "Analytical Chemistry Problems"],
+//           lectureLinks: ["https://chemistrylecturelink1.com", "https://chemistrylecturelink2.com"],
+//           lectureRecordingLinks: ["https://chemistrylecturerecordinglink1.com", "https://chemistrylecturerecordinglink2.com"],
+//           tutorialLinks: ["https://chemistrytutoriallink1.com", "https://chemistrytutoriallink2.com"],
+//           tutorialRecordingLinks: ["https://chemistrytutorialrecordinglink1.com", "https://chemistrytutorialrecordinglink2.com"])
 //]
+
+

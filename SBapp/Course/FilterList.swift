@@ -62,10 +62,10 @@ struct FilterList: View {
 
 
 
-//struct FilterList_Previews: PreviewProvider {
-//    static var previews: some View {
-//        @State var selectedTag: String?
-//        @State  var showingModal = false
-//        FilterList(course: coursesList[0], selectedTag: $selectedTag, showingModal: $showingModal)
-//    }
-//}
+struct FilterList_Previews: PreviewProvider {
+    static var previews: some View {
+        @State var selectedTag: String?
+        @State  var showingModal = false
+        FilterList(course: testCourses[0], selectedTag: $selectedTag, showingModal: $showingModal)
+    }
+}

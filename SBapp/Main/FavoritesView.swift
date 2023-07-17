@@ -8,14 +8,21 @@
 import SwiftUI
 
 struct FavoritesView: View {
-     @ObservedObject var courses: Courses
-     @State private var favoriteCourses: [Course] = []
-//     let viewModel: CourseViewModel
+    @ObservedObject var courses: Courses
+    @State private var favoriteCourses: [Course] = []
+    @State private var selectedTag: String?
 
      var body: some View {
          VStack {
              List (favoriteCourses) { course in
-                 NavigationLink(destination: CourseView(course: course)) {
+                 NavigationLink(destination:
+                    LessonsView(course: course, selectedTag: $selectedTag)
+                        .toolbar {
+                            ToolbarItemGroup {
+                                ToolbarButtons(course: course, selectedTag: .constant(nil), showFilterButton: .constant(true))
+                            }
+                        }
+                 ) {
                      Text(course.name)
                  }
              }
