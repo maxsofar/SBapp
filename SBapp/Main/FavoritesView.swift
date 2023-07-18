@@ -17,6 +17,8 @@ struct FavoritesView: View {
              List (favoriteCourses) { course in
                  NavigationLink(destination:
                     LessonsView(course: course, selectedTag: $selectedTag)
+                        .navigationTitle(course.name)
+                        .navigationBarTitleDisplayMode(.large)
                         .toolbar {
                             ToolbarItemGroup {
                                 ToolbarButtons(course: course, selectedTag: .constant(nil), showFilterButton: .constant(true))
@@ -26,6 +28,7 @@ struct FavoritesView: View {
                      Text(course.name)
                  }
              }
+             .padding(.top, 30)
              .onAppear {
                  favoriteCourses = courses.courses.filter{$0.isFavorite}
              }
@@ -35,10 +38,9 @@ struct FavoritesView: View {
      }
  }
 
-//struct FavoritesView_Previews: PreviewProvider {
-//    static var previews: some View {
-////        @StateObject var courses = Courses()
-//        let viewModel = CourseViewModel(numberOfWeeks: 13)
-//        return FavoritesView(viewModel: viewModel)
-//    }
-//}
+struct FavoritesView_Previews: PreviewProvider {
+    static var previews: some View {
+        @StateObject var courses = Courses()
+        return FavoritesView(courses: courses)
+    }
+}

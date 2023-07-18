@@ -23,6 +23,8 @@
 		509D7C7A2A4DCBA40029AE46 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 509D7C792A4DCBA40029AE46 /* SearchBar.swift */; };
 		50A042F52A62946A00F9E50A /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 50A042F72A62946A00F9E50A /* Localizable.strings */; };
 		50AA94902A4EBB080089AB8B /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50AA948F2A4EBB080089AB8B /* Title.swift */; };
+		50D496412A6717D700977A82 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 50D496402A6717D700977A82 /* SwiftSoup */; };
+		50D496432A67195500977A82 /* Scrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50D496422A67195500977A82 /* Scrapper.swift */; };
 		50DF13262A4F05CD00CBCC14 /* SearchBarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */; };
 		50E1A5122A5D779C007E8C21 /* MainViewToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */; };
 		50F4380A2A459A2400499500 /* LessonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F438092A459A2400499500 /* LessonsView.swift */; };
@@ -48,6 +50,7 @@
 		50A042F62A62946A00F9E50A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		50A042F82A62959500F9E50A /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/Localizable.strings; sourceTree = "<group>"; };
 		50AA948F2A4EBB080089AB8B /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
+		50D496422A67195500977A82 /* Scrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrapper.swift; sourceTree = "<group>"; };
 		50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarButtons.swift; sourceTree = "<group>"; };
 		50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewToolbar.swift; sourceTree = "<group>"; };
 		50F438092A459A2400499500 /* LessonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsView.swift; sourceTree = "<group>"; };
@@ -61,6 +64,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				503F11142A61A08700A5842F /* SwiftCSV in Frameworks */,
+				50D496412A6717D700977A82 /* SwiftSoup in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -126,6 +130,7 @@
 				504F0AA52A655CB20091D4CC /* ExamDetailView.swift */,
 				504F0AA32A655AAC0091D4CC /* ExamsView.swift */,
 				502E56A72A4380B100DFD6ED /* CoursesData.swift */,
+				50D496422A67195500977A82 /* Scrapper.swift */,
 			);
 			path = Course;
 			sourceTree = "<group>";
@@ -160,6 +165,7 @@
 			name = SBapp;
 			packageProductDependencies = (
 				503F11132A61A08700A5842F /* SwiftCSV */,
+				50D496402A6717D700977A82 /* SwiftSoup */,
 			);
 			productName = SBapp;
 			productReference = 502E56942A437C9300DFD6ED /* Study Buddy.app */;
@@ -192,6 +198,7 @@
 			mainGroup = 502E568B2A437C9300DFD6ED;
 			packageReferences = (
 				503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */,
+				50D4963F2A6717D700977A82 /* XCRemoteSwiftPackageReference "SwiftSoup" */,
 			);
 			productRefGroup = 502E56952A437C9300DFD6ED /* Products */;
 			projectDirPath = "";
@@ -221,6 +228,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				503F11112A61877F00A5842F /* FilterList.swift in Sources */,
+				50D496432A67195500977A82 /* Scrapper.swift in Sources */,
 				502FC6BE2A648EC000105B74 /* CustomDisclosureGroup.swift in Sources */,
 				50AA94902A4EBB080089AB8B /* Title.swift in Sources */,
 				504F0AA42A655AAC0091D4CC /* ExamsView.swift in Sources */,
@@ -461,6 +469,14 @@
 				minimumVersion = 0.8.1;
 			};
 		};
+		50D4963F2A6717D700977A82 /* XCRemoteSwiftPackageReference "SwiftSoup" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scinfu/SwiftSoup.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -468,6 +484,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 503F11122A61A08700A5842F /* XCRemoteSwiftPackageReference "SwiftCSV" */;
 			productName = SwiftCSV;
+		};
+		50D496402A6717D700977A82 /* SwiftSoup */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 50D4963F2A6717D700977A82 /* XCRemoteSwiftPackageReference "SwiftSoup" */;
+			productName = SwiftSoup;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

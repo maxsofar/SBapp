@@ -56,8 +56,11 @@ struct LoginView: View {
                                     .foregroundColor(.secondary)
                                     .offset(y: 17)
                             )
+                            .environment(\.layoutDirection, .leftToRight)
                     }
                     .padding()
+                    .environment(\.layoutDirection, .leftToRight)
+                    
                     HStack {
                         Image(systemName: "lock")
                             .foregroundColor(.secondary)
@@ -79,6 +82,7 @@ struct LoginView: View {
                             .frame(height: 10)
                     }
                     .padding()
+                    .environment(\.layoutDirection, .leftToRight)
                     Button(action: {
                         // Handle login or sign up action
                         
