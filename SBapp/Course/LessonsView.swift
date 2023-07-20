@@ -7,6 +7,16 @@
 
 import SwiftUI
 
+struct ActivityIndicatorView: UIViewRepresentable {
+    func makeUIView(context: Context) -> UIActivityIndicatorView {
+        let activityIndicator = UIActivityIndicatorView(style: .large)
+        activityIndicator.startAnimating()
+        return activityIndicator
+    }
+
+    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {}
+}
+
 struct ChecklistToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
@@ -28,32 +38,38 @@ struct LessonsView: View {
     @Binding var selectedTag: String?
     @State private var showingModal = false
     @Environment(\.colorScheme) var colorScheme
+    @State private var showActivityIndicator = false
 
     
     var body: some View {
-        ScrollView {
-            VStack {
+        ZStack {
+            ScrollView {
                 ForEach(1...13, id: \.self) { weekNumber in
                     if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
                         // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
                         EmptyView()
                     } else {
                         weekDisclosureGroup(weekNumber: weekNumber)
+                            .padding(.horizontal, 10)
                     }
                 }
             }
-            .padding(.vertical, 30)
-            .padding(.horizontal, 10)
+            if showActivityIndicator {
+                ActivityIndicatorView()
+            }
         }
-        .background(colorScheme == .dark ? Color.clear : Color.init(white: 0.95))
-//        .navigationTitle(course.name)
-//        .navigationBarTitleDisplayMode(.large)
-//        .toolbar {
-//            ToolbarItemGroup {
-//                favoriteButton
-//                filterButton
-//            }
-//        }
+        .onAppear {
+            //                course.scrape { progress in
+            //                            scrapeProgress = progress
+            //                }
+            showActivityIndicator = true
+            
+            course.scrape(){
+                
+                showActivityIndicator = false
+            }
+        }
+        
     }
     
     private func weekDisclosureGroup(weekNumber: Int) -> some View {
@@ -83,13 +99,14 @@ struct LessonsView: View {
                     }())
                 Spacer()
             }
-//            .padding(.horizontal,10)
+
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 10)
         .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
         .cornerRadius(10)
     }
+    
     
     
     private var favoriteButton: some View {
@@ -119,7 +136,7 @@ struct LessonsView: View {
 }
 
 
-struct CourseView_Previews: PreviewProvider {
+struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
         @State var selectedTag: String?
         let testCourse = testCourses[0]

@@ -73,14 +73,13 @@ struct WeekView: View {
                             }
                 ) {
                     HStack() {
-                        
-                        if weekNumber - 1 < course.lectureTags.count {
+                        if weekNumber - 1 < course.lectureLinks.count {
                             VStack(alignment: .center) {
-                                ForEach(course.lectureLinks.indices, id: \.self) { index in
-                                    let link = course.lectureLinks[index]
+                                if(course.lectureLinks.indices.contains(weekNumber - 1)) {
+                                    let link = course.lectureLinks[weekNumber - 1]
                                     Link(destination: URL(string: link)!) {
                                         let localizedLecture = NSLocalizedString("Lecture", comment: "")
-                                        Label(localizedLecture + " \(index + 1)", systemImage: "link")
+                                        Label(localizedLecture + " \(weekNumber)", systemImage: "link")
                                             .labelStyle(CustomLabelStyle())
                                     }
                                 }
@@ -121,11 +120,11 @@ struct WeekView: View {
                 ) {
                     HStack() {
                         VStack(alignment: .center) {
-                            ForEach(course.tutorialLinks.indices, id: \.self) { index in
-                                let link = course.tutorialLinks[index]
+                            if(course.tutorialLinks.indices.contains(weekNumber - 1)) {
+                                let link = course.tutorialLinks[weekNumber - 1]
                                 Link(destination: URL(string: link)!) {
                                     let localizedTutorial = NSLocalizedString("Tutorial", comment: "")
-                                    Label(localizedTutorial + " \(index + 1)", systemImage: "link")
+                                    Label(localizedTutorial + " \(weekNumber)", systemImage: "link")
                                         .labelStyle(CustomLabelStyle())
                                 }
                             }

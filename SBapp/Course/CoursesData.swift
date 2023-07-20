@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftCSV
+import SwiftSoup
 
 
 // URL of the CSV file on GitHub
@@ -21,6 +22,14 @@ struct Exam: Hashable {
 class Course : ObservableObject, Identifiable, Equatable {
     let id: String
     let name: String
+    let lectureTags: [String]
+    let tutorialTags: [String]
+    var lectureLinks: [String]
+    var lectureRecordingLinks: [String]
+    var tutorialLinks: [String]
+    var tutorialRecordingLinks: [String]
+    let exams: [Exam]
+    
     @Published var isFavorite: Bool {
         didSet {
             // Save the state of isFavorite to UserDefaults when it changes
@@ -28,9 +37,6 @@ class Course : ObservableObject, Identifiable, Equatable {
             UserDefaults.standard.set(isFavorite, forKey: key)
         }
     }
-    let lectureTags: [String]
-    let tutorialTags: [String]
-    
     @Published var isComplete: [Bool] {
         didSet {
             // Save the state of isComplete to UserDefaults when it changes
@@ -39,11 +45,6 @@ class Course : ObservableObject, Identifiable, Equatable {
         }
     }
     
-    let lectureLinks: [String]
-    let lectureRecordingLinks: [String]
-    let tutorialLinks: [String]
-    let tutorialRecordingLinks: [String]
-    let exams: [Exam]
     
     init(
         id: String,
@@ -82,7 +83,6 @@ class Course : ObservableObject, Identifiable, Equatable {
     }
 }
 
-
 extension Course {
     static func == (lhs: Course, rhs: Course) -> Bool {
        return lhs.id == rhs.id
@@ -117,6 +117,44 @@ extension Course {
             return
         }
         isComplete[week - 1] = value
+    }
+    
+//    func scrape(progressHandler: @escaping (Float) -> Void) {
+    func scrape(completion: @escaping () -> Void) {
+        if !lectureLinks.isEmpty || !tutorialLinks.isEmpty  {
+                defer { completion() }
+                    // The links have already been fetched, so return early
+                    return
+                }
+        
+        var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/lessons")!)
+        request.httpMethod = "GET"
+
+        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+            defer { completion() }
+            guard let data = data, error == nil else {
+                print("Error downloading HTML: \(error?.localizedDescription ?? "Unknown error")")
+                return
+            }
+            
+            if let html = String(data: data, encoding: .utf8) {
+                do {
+                    let document = try SwiftSoup.parse(html)
+                    // Use SwiftSoup to extract the lecture links from the HTML
+                    let lectureLinks = try document.select("a:contains(הרצאה)").array().map { try $0.attr("href") }
+                    // Update the lectureLinks property with the scraped lecture links
+                    self.lectureLinks = lectureLinks
+                    
+                    let tutorialLinks = try document.select("a:contains(תרגול)").array().map { try $0.attr("href") }
+                    self.tutorialLinks = tutorialLinks
+                } catch {
+                    print("Error parsing HTML: \(error.localizedDescription)")
+                }
+            } else {
+                print("Error converting data to string")
+            }
+        }
+        task.resume()
     }
 }
 
@@ -154,9 +192,9 @@ class Courses: ObservableObject {
                     name: name,
                     lectureTags: courseData.lectureTags,
                     tutorialTags: courseData.tutorialTags,
-                    lectureLinks: courseData.lectureLinks,
+//                    lectureLinks: courseData.lectureLinks,
                     lectureRecordingLinks: courseData.lectureRecordingLinks,
-                    tutorialLinks: courseData.tutorialLinks,
+//                    tutorialLinks: courseData.tutorialLinks,
                     tutorialRecordingLinks: courseData.tutorialRecordingLinks,
                     exams: testExams
                 )
@@ -188,13 +226,12 @@ class Courses: ObservableObject {
                        isFavorite: isFavorite,
                        lectureTags: courseData.lectureTags,
                        tutorialTags: courseData.tutorialTags,
-                       lectureLinks: courseData.lectureLinks,
+//                       lectureLinks: courseData.lectureLinks,
                        lectureRecordingLinks: courseData.lectureRecordingLinks,
-                       tutorialLinks: courseData.tutorialLinks,
+//                       tutorialLinks: courseData.tutorialLinks,
                        tutorialRecordingLinks: courseData.tutorialRecordingLinks,
                        exams: courseData.exams
                    )
-//                    return Course(id: id, name: name, isFavorite: isFavorite)
                 }
             }
         }

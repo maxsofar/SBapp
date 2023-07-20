@@ -21,6 +21,8 @@ struct SearchBar: View {
     var geoHeight: CGFloat
 //    @Namespace private var searchTransition
     
+//    @State var selectedTag: String? = nil
+    
     var body: some View {
         VStack {
             ZStack {
@@ -109,7 +111,8 @@ struct SearchBar_Previews: PreviewProvider {
                 Course(id: "12", name: "Infi1"),
                 Course(id: "13", name: "Physics1m")
             ]
-        return SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
+        return
+            SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
     }
 }
 
