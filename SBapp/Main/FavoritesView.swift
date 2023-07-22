@@ -10,25 +10,16 @@ import SwiftUI
 struct FavoritesView: View {
     @ObservedObject var courses: Courses
     @State private var favoriteCourses: [Course] = []
-    @State private var selectedTag: String?
 
      var body: some View {
          VStack {
              List (favoriteCourses) { course in
                  NavigationLink(destination:
-                    LessonsView(course: course, selectedTag: $selectedTag)
-                        .navigationTitle(course.name)
-                        .navigationBarTitleDisplayMode(.large)
-                        .toolbar {
-                            ToolbarItemGroup {
-                                ToolbarButtons(course: course, selectedTag: .constant(nil), showFilterButton: .constant(true))
-                            }
-                        }
+                    CourseView(course: course)
                  ) {
                      Text(course.name)
                  }
              }
-             .padding(.top, 30)
              .onAppear {
                  favoriteCourses = courses.courses.filter{$0.isFavorite}
              }
@@ -38,9 +29,8 @@ struct FavoritesView: View {
      }
  }
 
-struct FavoritesView_Previews: PreviewProvider {
-    static var previews: some View {
-        @StateObject var courses = Courses()
-        return FavoritesView(courses: courses)
-    }
-}
+//struct FavoritesView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        FavoritesView(courses: testCourses)
+//    }
+//}

@@ -33,6 +33,47 @@ struct ChecklistToggleStyle: ToggleStyle {
     }
 }
 
+struct ToolbarButtons: View {
+    @ObservedObject var course: Course
+    @Binding var selectedTag: String?
+    @Binding var showFilterButton: Bool
+    @State var showingModal = false
+    
+    var body: some View {
+        HStack {
+            favoriteButton
+            if showFilterButton {
+                filterButton
+            }
+        }
+    }
+    
+    private var favoriteButton: some View {
+        Button{
+            let generator = UIImpactFeedbackGenerator(style: .light)
+            generator.impactOccurred()
+            course.makeFavorite()
+        } label: {
+            Image(systemName: course.isFavorite ? "star.fill" : "star")
+                .scaleEffect(1.2)
+        }
+    }
+    
+    private var filterButton: some View {
+        Button() {
+            showingModal.toggle()
+        } label: {
+            Image(systemName: selectedTag == nil ? "line.3.horizontal.decrease.circle"
+                    : "line.3.horizontal.decrease.circle.fill"
+            )
+                .scaleEffect(1.2)
+        }
+        .sheet(isPresented: $showingModal) {
+            FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal)
+        }
+    }
+}
+
 struct LessonsView: View {
     @ObservedObject var course: Course
     @Binding var selectedTag: String?
@@ -45,23 +86,23 @@ struct LessonsView: View {
         ZStack {
             ScrollView {
                 ForEach(1...13, id: \.self) { weekNumber in
-                    if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
-                        // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
-                        EmptyView()
-                    } else {
-                        weekDisclosureGroup(weekNumber: weekNumber)
-                            .padding(.horizontal, 10)
-                    }
+//                    if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
+//                        // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
+//                        EmptyView()
+//                    } else {
+//                        weekDisclosureGroup(weekNumber: weekNumber)
+//                            .padding(.horizontal, 10)
+//                    }
+                    weekDisclosureGroup(weekNumber: weekNumber)
+                        .padding(.horizontal, 10)
                 }
+                Spacer().frame(height: 60)
             }
             if showActivityIndicator {
                 ActivityIndicatorView()
             }
         }
         .onAppear {
-            //                course.scrape { progress in
-            //                            scrapeProgress = progress
-            //                }
             showActivityIndicator = true
             
             course.scrape(){

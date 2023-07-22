@@ -25,47 +25,55 @@ struct CourseView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        VStack {
-            // Add your content views here
+        ZStack {
             if selection == 0 {
                 LessonsView(course: course, selectedTag: $selectedTag)
                     .background(colorScheme == .light ? Color.init(white: 0.95) : .clear)
-                    
+                    .transition(.move(edge: .leading))
             } else {
                 ExamsView(course: course)
+                    .transition(.move(edge: .trailing))
             }
-            
             
             // Custom tab bar
-            ZStack(alignment: .topLeading) {
-                HStack {
-                    Button(action: { selection = 0 }) {
-                        Label("Lessons", systemImage: "list.bullet")
+            VStack {
+                Spacer()
+                ZStack() {
+                    HStack {
+                        Button {
+                            withAnimation(.easeInOut(duration: 0.35)){
+                                selection = 0
+                            }
+                        } label: {
+                            Label("Lessons", systemImage: "list.bullet")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .buttonStyle(NoBlinkButtonStyle())
+                        .foregroundColor(selection == 0 ? .accentColor : .primary)
+                        
+                        Button{
+                            withAnimation(.easeInOut(duration: 0.35)){
+                                selection = 1
+                            }
+                        } label: {
+                            Label("Exams", systemImage: "doc.text")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .buttonStyle(NoBlinkButtonStyle())
+                        .foregroundColor(selection == 1 ? .accentColor : .primary)
                         
                     }
-                    .frame(maxWidth: .infinity)
-                    .buttonStyle(NoBlinkButtonStyle())
-                    .foregroundColor(selection == 0 ? .accentColor : .primary)
+                    .frame(height: 45)
                     
-                    Button(action: { selection = 1 }) {
-                        Label("Exams", systemImage: "doc.text")
-                    }
-                    .frame(maxWidth: .infinity)
-                    .buttonStyle(NoBlinkButtonStyle())
-                    .foregroundColor(selection == 1 ? .accentColor : .primary)
-                    
+                    RoundedRectangle(cornerRadius: 20)
+                        .frame(width: 100, height: 3)
+                        .foregroundColor(.blue)
+                        .position(x: selection == 0 ? UIScreen.main.bounds.width / 4 : UIScreen.main.bounds.width / 4 * 3)
+                        .animation(.spring(response: 0.5, dampingFraction: 0.55, blendDuration: 0), value: selection)
                 }
-                .frame(height: 45)
-                
-                RoundedRectangle(cornerRadius: 20)
-                    .frame(width: 100, height: 3)
-                    .foregroundColor(.blue)
-                    .position(x: selection == 0 ? UIScreen.main.bounds.width / 4 : UIScreen.main.bounds.width / 4 * 3)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.55, blendDuration: 0), value: selection)
-            }
-            .background(.ultraThinMaterial)
+                .background(.bar)
             .frame(height: 45)
-            .padding(.top, -8)
+            }
         }
         .navigationTitle(course.name)
         .navigationBarTitleDisplayMode(.large)
@@ -79,12 +87,6 @@ struct CourseView: View {
                    showFilterButton = (newValue == 0)
        }
     }
-////                ProgressView(value: scrapeProgress)
-//            if showActivityIndicator {
-//                ActivityIndicatorView()
-//            }
-//
-//        }
 }
 
 

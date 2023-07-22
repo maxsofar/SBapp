@@ -36,7 +36,7 @@ struct SearchBar: View {
                         }
                     }
                     textFieldIsFocused = true
-                    withAnimation(.easeInOut(duration: 0.5)) {
+                    withAnimation(.easeInOut(duration: 0.4)) {
                         isEditing = true
                         backButton = true
                         showList = true
@@ -56,6 +56,7 @@ struct SearchBar: View {
                             .allowsHitTesting(false)
                             .multilineTextAlignment(isEditing ? .leading : .center)
                             .padding(.horizontal, 40)
+                            .padding(.bottom, 5)
                             .focused($textFieldIsFocused)
                             .submitLabel(.search)
                             .onSubmit {
@@ -99,22 +100,22 @@ struct SearchBar: View {
     }
 }
 
-struct SearchBar_Previews: PreviewProvider {
-    static var previews: some View {
-        @State var isEditing = false
-        @State var backButton = false
-        @State var isListShown = false
-        @State var searchResults: [Course] = []
-        let previewCourses = Courses()
-        previewCourses.courses = [
-                Course(id: "11", name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
-                Course(id: "12", name: "Infi1"),
-                Course(id: "13", name: "Physics1m")
-            ]
-        return
-            SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
-    }
-}
+//struct SearchBar_Previews: PreviewProvider {
+//    static var previews: some View {
+//        @State var isEditing = false
+//        @State var backButton = false
+//        @State var isListShown = false
+//        @State var searchResults: [Course] = []
+//        let previewCourses = Courses()
+//        previewCourses.courses = [
+//                Course(id: "11", name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
+//                Course(id: "12", name: "Infi1"),
+//                Course(id: "13", name: "Physics1m")
+//            ]
+//        return
+//            SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
+//    }
+//}
 
 
 public extension UITextField {
