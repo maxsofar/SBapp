@@ -7,6 +7,31 @@
 
 import SwiftUI
 
+struct User {
+    let email: String
+    let password: String
+}
+
+class UserViewModel: ObservableObject {
+    @Published var registeredUsers: [User] = []
+    
+    func register(email: String, password: String) -> Bool {
+        if email.isEmpty || password.isEmpty {
+            return false
+        }
+        
+        let newUser = User(email: email, password: password)
+        registeredUsers.append(newUser)
+        return true
+    }
+    
+    func login(email: String, password: String) -> Bool {
+        if let _ = registeredUsers.first(where: { $0.email == email && $0.password == password }) {
+            return true
+        }
+        return false
+    }
+}
 
 
 struct LoginView: View {
@@ -14,6 +39,8 @@ struct LoginView: View {
     @State private var password = ""
     @State private var signUp: Bool = false
     @FocusState private var isFocused: FormField?
+    @StateObject private var viewModel = UserViewModel()
+    @State private var showAlert = false
     
     enum FormField {
        case email, password
@@ -56,8 +83,11 @@ struct LoginView: View {
                                     .foregroundColor(.secondary)
                                     .offset(y: 17)
                             )
+                            .environment(\.layoutDirection, .leftToRight)
                     }
                     .padding()
+                    .environment(\.layoutDirection, .leftToRight)
+                    
                     HStack {
                         Image(systemName: "lock")
                             .foregroundColor(.secondary)
@@ -79,8 +109,19 @@ struct LoginView: View {
                             .frame(height: 10)
                     }
                     .padding()
+                    .environment(\.layoutDirection, .leftToRight)
                     Button(action: {
-                        // Handle login or sign up action
+                        if signUp {
+                            let success = viewModel.register(email: email, password: password)
+                            if success {
+                                showAlert = true
+                            }
+                        } else {
+                            let success = viewModel.login(email: email, password: password)
+                            if success {
+                                showAlert = true
+                            }
+                        }
                         
                     }) {
                         ZStack {
@@ -116,6 +157,9 @@ struct LoginView: View {
                                  : Text(NSLocalizedString("Log In (Noun)", comment: "Noun"))
                 )
                 .navigationBarTitleDisplayMode(.large)
+                .alert(isPresented: $showAlert) {
+                    Alert(title: Text("Success"), message: Text("You have successfully registered/logged in."), dismissButton: .default(Text("OK")))
+                }
             }
         }
     }

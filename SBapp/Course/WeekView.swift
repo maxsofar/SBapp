@@ -26,7 +26,7 @@ struct AutoColorGroupBoxStyle: GroupBoxStyle {
         .padding()
         .background(backgroundColor)
         .foregroundColor(foregroundColor)
-        .frame(minWidth: 250, maxWidth: 350, minHeight: 150)
+        .frame(minWidth: 250, maxWidth: UIScreen.main.bounds.width * 0.8, minHeight: 150, maxHeight: 210)
         .cornerRadius(15)
     }
 }
@@ -60,46 +60,56 @@ struct WeekView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
-                GroupBox(
-                    label: VStack(alignment: .leading) {
-                            Text("Lecture")
-                                .font(.title)
-                                .padding(.bottom, 0.5)
-                                if weekNumber - 1 < course.lectureTags.count {
-                                    let lectureTopic = course.lectureTags[weekNumber - 1]
-                                    Text("\(lectureTopic)")
-                                        .font(.title3)
-                                }
+                GroupBox(label:
+                    VStack(alignment: .leading) {
+                        Text("Lecture")
+                            .font(.title)
+                            .padding(.bottom, 0.5)
+                        if let lectureBadges = course.lectureTags[weekNumber] {
+                            ForEach(lectureBadges, id: \.self) { lectureBadge in
+                                Text(lectureBadge)
+                                    .font(.title3)
                             }
+                        }     
+                    }
                 ) {
                     HStack() {
-                        
-                        if weekNumber - 1 < course.lectureTags.count {
-                            VStack(alignment: .center) {
-                                ForEach(course.lectureLinks.indices, id: \.self) { index in
-                                    let link = course.lectureLinks[index]
+                        if course.lectureLinks.indices.contains(weekNumber - 1)  ||
+                            course.lectureRecordingLinks.indices.contains(weekNumber - 1) 
+                        {
+                            if(course.lectureLinks.indices.contains(weekNumber - 1)) {
+                                Spacer()
+                                let link = course.lectureLinks[weekNumber - 1]
+                                VStack {
+                                    Spacer()
                                     Link(destination: URL(string: link)!) {
                                         let localizedLecture = NSLocalizedString("Lecture", comment: "")
-                                        Label(localizedLecture + " \(index + 1)", systemImage: "link")
+                                        Label(localizedLecture, systemImage: "link")
                                             .labelStyle(CustomLabelStyle())
                                     }
                                 }
                             }
-                            VStack(alignment: .center) {
-                                ForEach(course.lectureRecordingLinks.indices, id: \.self) { index in
-                                    let link = course.lectureRecordingLinks[index]
+                            Spacer(minLength: 20)
+                            if(course.lectureRecordingLinks.indices.contains(weekNumber - 1)) {
+                                let link = course.lectureRecordingLinks[weekNumber - 1]
+                                VStack {
+                                    Spacer()
                                     Link(destination: URL(string: link)!) {
                                         let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                        Label(localizedRecording + " \(index + 1)", systemImage: "video")
+                                        Label(localizedRecording, systemImage: "video")
                                             .labelStyle(CustomLabelStyle())
                                     }
                                 }
+                                Spacer()
                             }
-                        }
-                        else {
+                        } else {
+                            Spacer()
                             VStack {
                                 Spacer()
                             }
+                            let localizedND = NSLocalizedString("No Data", comment: "")
+                            Label(localizedND, systemImage: "nosign")
+                                .labelStyle(CustomLabelStyle())
                             Spacer()
                         }
                     }
@@ -107,43 +117,63 @@ struct WeekView: View {
                 }
                 .groupBoxStyle(AutoColorGroupBoxStyle())
                 
-                GroupBox(
-                    label: VStack(alignment: .leading) {
+                GroupBox(label:
+                    VStack(alignment: .leading) {
                         Text("Tutorial")
                             .font(.title)
                             .padding(.bottom, 0.5)
-                            if weekNumber - 1 < course.tutorialTags.count {
-                                let tutorialTopic = course.tutorialTags[weekNumber - 1]
-                                Text("\(tutorialTopic)")
-                                    .font(.title2)
+                        if let tutorialBadges = course.tutorialTags[weekNumber] {
+                            ForEach(tutorialBadges, id: \.self) { tutorialBadge in
+                                Text(tutorialBadge)
+                                    .font(.title3)
                             }
+                        }
                     }
                 ) {
                     HStack() {
-                        VStack(alignment: .center) {
-                            ForEach(course.tutorialLinks.indices, id: \.self) { index in
-                                let link = course.tutorialLinks[index]
-                                Link(destination: URL(string: link)!) {
-                                    let localizedTutorial = NSLocalizedString("Tutorial", comment: "")
-                                    Label(localizedTutorial + " \(index + 1)", systemImage: "link")
-                                        .labelStyle(CustomLabelStyle())
+                        if course.tutorialLinks.indices.contains(weekNumber - 1)  ||
+                            course.tutorialRecordingLinks.indices.contains(weekNumber - 1)
+                        {
+                            if(course.tutorialLinks.indices.contains(weekNumber - 1)) {
+                                Spacer()
+                                let link = course.tutorialLinks[weekNumber - 1]
+                                VStack {
+                                    Spacer()
+                                    Link(destination: URL(string: link)!) {
+                                        let localizedTutorial = NSLocalizedString("Tutorial", comment: "")
+                                        Label(localizedTutorial, systemImage: "link")
+                                            .labelStyle(CustomLabelStyle())
+                                    }
                                 }
                             }
-                        }
-                        VStack(alignment: .center) {
-                            ForEach(course.tutorialRecordingLinks.indices, id: \.self) { index in
-                                let link = course.tutorialRecordingLinks[index]
-                                Link(destination: URL(string: link)!) {
-                                    let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                    Label(localizedRecording + " \(index + 1)", systemImage: "video")
-                                        .labelStyle(CustomLabelStyle())
+                            Spacer(minLength: 20)
+                            if(course.tutorialRecordingLinks.indices.contains(weekNumber - 1)) {
+                                let link = course.tutorialRecordingLinks[weekNumber - 1]
+                                VStack {
+                                    Spacer()
+                                    Link(destination: URL(string: link)!) {
+                                        let localizedRecording = NSLocalizedString("Recording", comment: "")
+                                        Label(localizedRecording, systemImage: "video")
+                                            .labelStyle(CustomLabelStyle())
+                                    }
                                 }
+                                Spacer()
                             }
+                            
+                        } else {
+                            Spacer()
+                            VStack {
+                                Spacer()
+                            }
+                            let localizedND = NSLocalizedString("No Data", comment: "")
+                            Label(localizedND, systemImage: "nosign")
+                                .labelStyle(CustomLabelStyle())
+                            Spacer()
                         }
-                        
                     }
                     .padding(.vertical, 10)
                 }
+                .groupBoxStyle(AutoColorGroupBoxStyle())
                 .groupBoxStyle(AutoColorGroupBoxStyle())
             }
         }
@@ -152,10 +182,8 @@ struct WeekView: View {
 
 struct WeekView_Previews: PreviewProvider {
     static var previews: some View {
-//        let tags = ["Atoms", "Leibniz"]
-//        WeekView(tag: (tags[0], tags[1]))
-//            .frame(width: 380, height: 90)
         WeekView(weekNumber: 1, course: testCourses[0])
-            .frame(width: 380, height: 300)
+            .padding(.horizontal, 10)
+            
     }
 }

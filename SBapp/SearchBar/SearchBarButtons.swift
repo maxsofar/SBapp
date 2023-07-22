@@ -34,7 +34,10 @@ struct SearchBarButtons: View {
                     
                 } label: {
                     Image(systemName: "chevron.backward")
-                        .foregroundColor(Color.init(white: 0.5))
+                        .foregroundColor(colorScheme == .light ? Color.init(white: 0.4) :
+                            Color.init(white: 0.7))
+                        .fontWeight(.bold)
+                        .scaleEffect(1.2)
                 }
             }
                
