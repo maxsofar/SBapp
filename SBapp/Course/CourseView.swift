@@ -17,10 +17,7 @@ struct CourseView: View {
     @State private var selection = 0
     @State private var showingModal = false
     @State private var selectedTag: String?
-    @State var showFilterButton = true
-    
-    @State private var scrapeProgress: Float = 0
-    
+    @State var showFilterButton = true    
     @ObservedObject var course: Course
     @Environment(\.colorScheme) var colorScheme
     
@@ -31,8 +28,8 @@ struct CourseView: View {
                     .background(colorScheme == .light ? Color.init(white: 0.95) : .clear)
                     .transition(.move(edge: .leading))
             } else {
-                ExamsView(course: course)
-                    .transition(.move(edge: .trailing))
+//                ExamsView(course: course)
+//                    .transition(.move(edge: .trailing))
             }
             
             // Custom tab bar

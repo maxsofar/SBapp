@@ -17,6 +17,19 @@ struct ActivityIndicatorView: UIViewRepresentable {
     func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {}
 }
 
+struct customActivityIndicator: View{
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 15)
+                .frame(maxWidth: 150, maxHeight: 150)
+                .foregroundColor(.clear)
+                .background(.ultraThinMaterial)
+                .cornerRadius(15)
+            ActivityIndicatorView()
+        }
+    }
+}
+
 struct ChecklistToggleStyle: ToggleStyle {
     func makeBody(configuration: Configuration) -> some View {
         ZStack {
@@ -74,32 +87,61 @@ struct ToolbarButtons: View {
     }
 }
 
+struct BottomPositionPreferenceKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
+
 struct LessonsView: View {
     @ObservedObject var course: Course
     @Binding var selectedTag: String?
     @State private var showingModal = false
     @Environment(\.colorScheme) var colorScheme
     @State private var showActivityIndicator = false
+    @State private var bottomPosition: CGFloat = 0
 
+    //                    if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
+    //                        // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
+    //                        EmptyView()
+    //                    } else {
+    //                        weekDisclosureGroup(weekNumber: weekNumber)
+    //                            .padding(.horizontal, 10)
+    //                    }
     
     var body: some View {
-        ZStack {
+        ZStack(alignment: .center) {
             ScrollView {
-                ForEach(1...13, id: \.self) { weekNumber in
-//                    if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
-//                        // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
-//                        EmptyView()
-//                    } else {
-//                        weekDisclosureGroup(weekNumber: weekNumber)
+                VStack {
+                    ForEach(1...13, id: \.self) { weekNumber in
+                        
+                        weekDisclosureGroup(weekNumber: weekNumber)
 //                            .padding(.horizontal, 10)
-//                    }
-                    weekDisclosureGroup(weekNumber: weekNumber)
-                        .padding(.horizontal, 10)
+                            
+                    }
+                    Spacer().frame(height: 60)
                 }
-                Spacer().frame(height: 60)
+                .background(GeometryReader { geometry in
+                    Color.clear
+                        .preference(key: BottomPositionPreferenceKey.self, value: geometry.frame(in: .global).maxY)
+                })
             }
+            .onPreferenceChange(BottomPositionPreferenceKey.self) { value in
+                self.bottomPosition = value
+            }
+            .overlay(
+                Image("Lesson_bot")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 250, height: 250)
+                    .position(x: UIScreen.main.bounds.width / 2, y:  bottomPosition - UIScreen.main.bounds.width / 15)
+            )
             if showActivityIndicator {
-                ActivityIndicatorView()
+                customActivityIndicator()
+                    .offset(y: -40)
             }
         }
         .onAppear {
@@ -140,7 +182,6 @@ struct LessonsView: View {
                     }())
                 Spacer()
             }
-
         }
         .padding(.vertical, 10)
         .padding(.horizontal, 10)
@@ -181,6 +222,8 @@ struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
         @State var selectedTag: String?
         let testCourse = testCourses[0]
-        LessonsView(course: testCourse, selectedTag: $selectedTag)
+        NavigationView {
+            LessonsView(course: testCourse, selectedTag: $selectedTag)
+        }
     }
 }

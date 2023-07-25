@@ -23,10 +23,10 @@ struct AutoColorGroupBoxStyle: GroupBoxStyle {
             configuration.label
             configuration.content
         }
+        .frame(minWidth: 250, maxWidth: UIScreen.main.bounds.width * 0.77)
         .padding()
         .background(backgroundColor)
         .foregroundColor(foregroundColor)
-        .frame(minWidth: 250, maxWidth: UIScreen.main.bounds.width * 0.8, minHeight: 150, maxHeight: 210)
         .cornerRadius(15)
     }
 }
@@ -65,7 +65,7 @@ struct WeekView: View {
                         Text("Lecture")
                             .font(.title)
                             .padding(.bottom, 0.5)
-                        if let lectureBadges = course.lectureTags[weekNumber] {
+                        if let lectureBadges = course.lectureTags[weekNumber - 1] {
                             ForEach(lectureBadges, id: \.self) { lectureBadge in
                                 Text(lectureBadge)
                                     .font(.title3)
@@ -77,36 +77,37 @@ struct WeekView: View {
                         if course.lectureLinks.indices.contains(weekNumber - 1)  ||
                             course.lectureRecordingLinks.indices.contains(weekNumber - 1) 
                         {
+                            Spacer()
                             if(course.lectureLinks.indices.contains(weekNumber - 1)) {
-                                Spacer()
                                 let link = course.lectureLinks[weekNumber - 1]
-                                VStack {
-                                    Spacer()
-                                    Link(destination: URL(string: link)!) {
-                                        let localizedLecture = NSLocalizedString("Lecture", comment: "")
-                                        Label(localizedLecture, systemImage: "link")
-                                            .labelStyle(CustomLabelStyle())
-                                    }
+                                Link(destination: URL(string: link)!) {
+                                    let localizedLecture = NSLocalizedString("Lecture", comment: "")
+                                    Label(localizedLecture, systemImage: "link")
+                                        .labelStyle(CustomLabelStyle())
                                 }
                             }
-                            Spacer(minLength: 20)
-                            if(course.lectureRecordingLinks.indices.contains(weekNumber - 1)) {
-                                let link = course.lectureRecordingLinks[weekNumber - 1]
-                                VStack {
-                                    Spacer()
-                                    Link(destination: URL(string: link)!) {
-                                        let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                        Label(localizedRecording, systemImage: "video")
-                                            .labelStyle(CustomLabelStyle())
-                                    }
-                                }
+                            if course.lectureRecordingLinks.indices.contains(weekNumber - 1) {
                                 Spacer()
+                                let links = course.lectureRecordingLinks[weekNumber - 1]
+                                VStack {
+                                    ForEach(links.indices, id: \.self) { index in
+                                        let link = links[index]
+                                        Link(destination: URL(string: link)!) {
+                                            let localizedRecording = NSLocalizedString("Recording", comment: "")
+                                            if links.count > 1 {
+                                                Label("\(localizedRecording) \(index + 1)", systemImage: "video")
+                                                    .labelStyle(CustomLabelStyle())
+                                            } else {
+                                                Label(localizedRecording, systemImage: "video")
+                                                    .labelStyle(CustomLabelStyle())
+                                            }
+                                        }
+                                    }
+                                }
                             }
+                            Spacer()
                         } else {
                             Spacer()
-                            VStack {
-                                Spacer()
-                            }
                             let localizedND = NSLocalizedString("No Data", comment: "")
                             Label(localizedND, systemImage: "nosign")
                                 .labelStyle(CustomLabelStyle())
@@ -122,7 +123,7 @@ struct WeekView: View {
                         Text("Tutorial")
                             .font(.title)
                             .padding(.bottom, 0.5)
-                        if let tutorialBadges = course.tutorialTags[weekNumber] {
+                        if let tutorialBadges = course.tutorialTags[weekNumber - 1] {
                             ForEach(tutorialBadges, id: \.self) { tutorialBadge in
                                 Text(tutorialBadge)
                                     .font(.title3)
@@ -134,37 +135,38 @@ struct WeekView: View {
                         if course.tutorialLinks.indices.contains(weekNumber - 1)  ||
                             course.tutorialRecordingLinks.indices.contains(weekNumber - 1)
                         {
+                            Spacer()
                             if(course.tutorialLinks.indices.contains(weekNumber - 1)) {
-                                Spacer()
                                 let link = course.tutorialLinks[weekNumber - 1]
-                                VStack {
-                                    Spacer()
                                     Link(destination: URL(string: link)!) {
                                         let localizedTutorial = NSLocalizedString("Tutorial", comment: "")
                                         Label(localizedTutorial, systemImage: "link")
                                             .labelStyle(CustomLabelStyle())
                                     }
-                                }
                             }
-                            Spacer(minLength: 20)
-                            if(course.tutorialRecordingLinks.indices.contains(weekNumber - 1)) {
-                                let link = course.tutorialRecordingLinks[weekNumber - 1]
+                            if course.tutorialRecordingLinks.indices.contains(weekNumber - 1) {
+                                Spacer()
+                                let links = course.tutorialRecordingLinks[weekNumber - 1]
                                 VStack {
-                                    Spacer()
-                                    Link(destination: URL(string: link)!) {
-                                        let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                        Label(localizedRecording, systemImage: "video")
-                                            .labelStyle(CustomLabelStyle())
+                                    ForEach(links.indices, id: \.self) { index in
+                                        let link = links[index]
+                                        Link(destination: URL(string: link)!) {
+                                            let localizedRecording = NSLocalizedString("Recording", comment: "")
+                                            if links.count > 1 {
+                                                Label("\(localizedRecording) \(index + 1)", systemImage: "video")
+                                                    .labelStyle(CustomLabelStyle())
+                                            } else {
+                                                Label(localizedRecording, systemImage: "video")
+                                                    .labelStyle(CustomLabelStyle())
+                                            }
+                                        }
                                     }
                                 }
-                                Spacer()
                             }
+                            Spacer()
                             
                         } else {
                             Spacer()
-                            VStack {
-                                Spacer()
-                            }
                             let localizedND = NSLocalizedString("No Data", comment: "")
                             Label(localizedND, systemImage: "nosign")
                                 .labelStyle(CustomLabelStyle())
