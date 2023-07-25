@@ -12,7 +12,7 @@ struct FilterList: View {
     @Binding var selectedTag: String?
     @Binding var showingModal: Bool
     @Environment(\.colorScheme) var colorScheme
-
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text("Filter by Topic")
@@ -20,31 +20,15 @@ struct FilterList: View {
                 .fontWeight(.bold)
                 .padding(.horizontal, 30)
                 .padding(.top, 40)
-//                .onAppear{
-//                    print("lectureTags content:")
-//                    print(course.lectureTags)
-//                    print("tutorialTags content:")
-//                    print(course.tutorialTags)
-//                }
             
             List {
                 Section {
                     filterButton(title: "All", tag: nil)
                 }
-                ForEach(Array(course.lectureTags.keys.sorted()), id: \.self) { weekNumber in
-                    if let lectureBadges = course.lectureTags[weekNumber] {
-                        ForEach(lectureBadges, id: \.self) { lectureBadge in
-                            filterButton(title: lectureBadge, tag: lectureBadge)
-                        }
-                    }
-                    if let tutorialBadges = course.tutorialTags[weekNumber] {
-                        ForEach(tutorialBadges, id: \.self) { tutorialBadge in
-                            if !(course.lectureTags[weekNumber]?.contains(tutorialBadge) ?? false) {
-                                filterButton(title: tutorialBadge, tag: tutorialBadge)
-                            }
-                        }
-                    }
+                ForEach(Array(course.allTags.keys).sorted(), id: \.self) { tag in
+                    filterButton(title: tag, tag: tag)
                 }
+                
             }
             .padding(.top, -20)
         }

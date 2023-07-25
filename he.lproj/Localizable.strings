@@ -24,6 +24,7 @@
 "Lecture" = "הרצאה";
 "Tutorial" = "תרגול";
 "Recording" = "הקלטה";
+"Recording %d" = "הקלטה %d";
 "Lessons" = "שיעורים";
 "Exams" = "מבחנים";
 "No Data" = "אין מידע";

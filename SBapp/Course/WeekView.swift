@@ -50,6 +50,30 @@ struct CustomLabelStyle: LabelStyle {
     }
 }
 
+struct LinksView: View {
+    let links: [String]
+
+    var body: some View {
+        VStack {
+            ForEach(links.indices, id: \.self) { index in
+                let link = links[index]
+                Link(destination: URL(string: link)!) {
+                    let localizedRecording = NSLocalizedString("Recording", comment: "")
+                    if links.count > 1 {
+                        let localizedRecordingWithIndex = NSLocalizedString("Recording %d", comment: "")
+                        Label(String(format: localizedRecordingWithIndex, index + 1), systemImage: "video")
+                            .labelStyle(CustomLabelStyle())
+                    } else {
+                        Label(localizedRecording, systemImage: "video")
+                            .labelStyle(CustomLabelStyle())
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 
 
 struct WeekView: View {
@@ -65,12 +89,14 @@ struct WeekView: View {
                         Text("Lecture")
                             .font(.title)
                             .padding(.bottom, 0.5)
-                        if let lectureBadges = course.lectureTags[weekNumber - 1] {
+                    if !course.lectureTags.isEmpty && !course.lectureTags[weekNumber - 1].isEmpty {
+                            let lectureBadges = course.lectureTags[weekNumber - 1]
+                        
                             ForEach(lectureBadges, id: \.self) { lectureBadge in
                                 Text(lectureBadge)
                                     .font(.title3)
                             }
-                        }     
+                        }
                     }
                 ) {
                     HStack() {
@@ -87,23 +113,8 @@ struct WeekView: View {
                                 }
                             }
                             if course.lectureRecordingLinks.indices.contains(weekNumber - 1) {
-                                Spacer()
                                 let links = course.lectureRecordingLinks[weekNumber - 1]
-                                VStack {
-                                    ForEach(links.indices, id: \.self) { index in
-                                        let link = links[index]
-                                        Link(destination: URL(string: link)!) {
-                                            let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                            if links.count > 1 {
-                                                Label("\(localizedRecording) \(index + 1)", systemImage: "video")
-                                                    .labelStyle(CustomLabelStyle())
-                                            } else {
-                                                Label(localizedRecording, systemImage: "video")
-                                                    .labelStyle(CustomLabelStyle())
-                                            }
-                                        }
-                                    }
-                                }
+                                LinksView(links: links)
                             }
                             Spacer()
                         } else {
@@ -123,12 +134,13 @@ struct WeekView: View {
                         Text("Tutorial")
                             .font(.title)
                             .padding(.bottom, 0.5)
-                        if let tutorialBadges = course.tutorialTags[weekNumber - 1] {
-                            ForEach(tutorialBadges, id: \.self) { tutorialBadge in
-                                Text(tutorialBadge)
-                                    .font(.title3)
+                    if !course.tutorialTags.isEmpty && !course.tutorialTags[weekNumber - 1].isEmpty {
+                            let tutorialBadges = course.tutorialTags[weekNumber - 1]
+                                ForEach(tutorialBadges, id: \.self) { tutorialBadge in
+                                    Text(tutorialBadge)
+                                        .font(.title3)
+                                }
                             }
-                        }
                     }
                 ) {
                     HStack() {
@@ -145,23 +157,8 @@ struct WeekView: View {
                                     }
                             }
                             if course.tutorialRecordingLinks.indices.contains(weekNumber - 1) {
-                                Spacer()
                                 let links = course.tutorialRecordingLinks[weekNumber - 1]
-                                VStack {
-                                    ForEach(links.indices, id: \.self) { index in
-                                        let link = links[index]
-                                        Link(destination: URL(string: link)!) {
-                                            let localizedRecording = NSLocalizedString("Recording", comment: "")
-                                            if links.count > 1 {
-                                                Label("\(localizedRecording) \(index + 1)", systemImage: "video")
-                                                    .labelStyle(CustomLabelStyle())
-                                            } else {
-                                                Label(localizedRecording, systemImage: "video")
-                                                    .labelStyle(CustomLabelStyle())
-                                            }
-                                        }
-                                    }
-                                }
+                                LinksView(links: links)
                             }
                             Spacer()
                             
@@ -175,7 +172,6 @@ struct WeekView: View {
                     }
                     .padding(.vertical, 10)
                 }
-                .groupBoxStyle(AutoColorGroupBoxStyle())
                 .groupBoxStyle(AutoColorGroupBoxStyle())
             }
         }

@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-
-
-
-
-
 struct test: View {
     @State private var selection = 0
     @State private var showingModal = false

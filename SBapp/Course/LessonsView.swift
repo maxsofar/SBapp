@@ -95,6 +95,16 @@ struct BottomPositionPreferenceKey: PreferenceKey {
     }
 }
 
+struct LazyView<Content: View>: View {
+    let build: () -> Content
+    init(_ build: @autoclosure @escaping () -> Content) {
+        self.build = build
+    }
+    var body: Content {
+        build()
+    }
+}
+
 
 struct LessonsView: View {
     @ObservedObject var course: Course
@@ -104,24 +114,20 @@ struct LessonsView: View {
     @State private var showActivityIndicator = false
     @State private var bottomPosition: CGFloat = 0
 
-    //                    if let tag = selectedTag, (course.getTags(week: weekNumber).lecture != tag && course.getTags(week: weekNumber).tutorial != tag) {
-    //                        // Skip this week if a tag is selected and it doesn't appear in the course tags for this week
-    //                        EmptyView()
-    //                    } else {
-    //                        weekDisclosureGroup(weekNumber: weekNumber)
-    //                            .padding(.horizontal, 10)
-    //                    }
-    
     var body: some View {
         ZStack(alignment: .center) {
             ScrollView {
                 VStack {
                     ForEach(1...13, id: \.self) { weekNumber in
-                        
-                        weekDisclosureGroup(weekNumber: weekNumber)
-//                            .padding(.horizontal, 10)
-                            
+                        if let tag = selectedTag, let weeks = course.allTags[tag], !weeks.contains(weekNumber - 1) {
+                            // Skip this week if a tag is selected and it doesn't appear in the tags dictionary for this week
+                            EmptyView()
+                        } else {
+                            weekDisclosureGroup(weekNumber: weekNumber)
+                                .padding(.horizontal, 10)
+                        }
                     }
+
                     Spacer().frame(height: 60)
                 }
                 .background(GeometryReader { geometry in
@@ -212,7 +218,7 @@ struct LessonsView: View {
                 .scaleEffect(1.2)
         }
         .sheet(isPresented: $showingModal) {
-            FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal)
+            LazyView(FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal))
         }
     }
 }

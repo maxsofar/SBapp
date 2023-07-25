@@ -33,8 +33,8 @@ class Exam {
 class Course : ObservableObject, Identifiable, Equatable {
     let id: String
     let name: String
-    var lectureTags: [Int: [String]]
-    var tutorialTags: [Int: [String]]
+    var lectureTags: [[String]]
+    var tutorialTags: [[String]]
     var lectureLinks: [String]
     var lectureRecordingLinks: [[String]]
     var tutorialLinks: [String]
@@ -60,8 +60,8 @@ class Course : ObservableObject, Identifiable, Equatable {
         id: String,
         name: String,
         isFavorite: Bool = false,
-        lectureTags: [Int: [String]] = [:],
-        tutorialTags: [Int: [String]] = [:],
+        lectureTags: [[String]] = [],
+        tutorialTags: [[String]] = [],
         lectureLinks: [String] = [],
         lectureRecordingLinks: [[String]] = [],
         tutorialLinks: [String] = [],
@@ -91,6 +91,22 @@ class Course : ObservableObject, Identifiable, Equatable {
 }
 
 extension Course {
+    var allTags: [String: [Int]] {
+            var tags: [String: [Int]] = [:]
+            for (weekNumber, lectureBadges) in lectureTags.enumerated() {
+                for lectureBadge in lectureBadges {
+                    tags[lectureBadge, default: []].append(weekNumber)
+                }
+            }
+            for (weekNumber, tutorialBadges) in tutorialTags.enumerated() {
+                for tutorialBadge in tutorialBadges {
+                    tags[tutorialBadge, default: []].append(weekNumber)
+                }
+            }
+            return tags
+        }
+
+    
     static func == (lhs: Course, rhs: Course) -> Bool {
        return lhs.id == rhs.id
    }
@@ -112,7 +128,7 @@ extension Course {
         }
         isComplete[week - 1] = value
     }
-    
+
     
     func scrape(completion: @escaping () -> Void) {
         if !lectureLinks.isEmpty || !tutorialLinks.isEmpty  {
@@ -174,10 +190,21 @@ extension Course {
                             let badgeText = try badge.text()
 
                             if isLectureRow {
-                                self.lectureTags[lectureWeekNumber, default: []].append(badgeText)
+                                // Check if the lectureTags array has enough inner arrays
+                                while self.lectureTags.count <= lectureWeekNumber {
+                                    self.lectureTags.append([])
+                                }
+                                // Append the badgeText to the inner array at index lectureWeekNumber
+                                self.lectureTags[lectureWeekNumber].append(badgeText)
                             } else {
-                                self.tutorialTags[tutorialWeekNumber, default: []].append(badgeText)
+                                // Check if the tutorialTags array has enough inner arrays
+                                while self.tutorialTags.count <= tutorialWeekNumber {
+                                    self.tutorialTags.append([])
+                                }
+                                // Append the badgeText to the inner array at index tutorialWeekNumber
+                                self.tutorialTags[tutorialWeekNumber].append(badgeText)
                             }
+
                         }
 
                         if isLectureRow {
@@ -196,7 +223,6 @@ extension Course {
         task.resume()
     }
 
-    
     func scrapeExams(completion: @escaping () -> Void) {
         var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/exams")!)
         request.httpMethod = "GET"
@@ -312,44 +338,60 @@ class Courses: ObservableObject {
     }
 }
 
-// Dummy data for exams
-//let testExams = [
-//    Exam(year: "2022", semester: "Fall", links: ["https://example.com/exam1", "https://example.com/exam2"]),
-//    Exam(year: "2022", semester: "Spring", links: ["https://example.com/exam3", "https://example.com/exam4"]),
-//    Exam(year: "2021", semester: "Fall", links: ["https://example.com/exam5", "https://example.com/exam6"]),
-//    Exam(year: "2021", semester: "Spring", links: ["https://example.com/exam7", "https://example.com/exam8"])
-//]
+let testExams: [Exam] = [
+    Exam(
+        semesterYear: "2022-2023",
+        examFormLinks: ["https://example.com/exam1.pdf", "https://example.com/exam2.pdf"],
+        solutionLinks: ["https://example.com/solution1.pdf", "https://example.com/solution2.pdf"],
+        recordingLinks: ["https://example.com/recording1.mp4", "https://example.com/recording2.mp4"],
+        subjects: [
+            1: ["Mathematics", "Physics"],
+            2: ["Chemistry", "Biology"]
+        ]
+    ),
+    Exam(
+        semesterYear: "2023-2024",
+        examFormLinks: ["https://example.com/exam3.pdf", "https://example.com/exam4.pdf"],
+        solutionLinks: ["https://example.com/solution3.pdf", "https://example.com/solution4.pdf"],
+        recordingLinks: ["https://example.com/recording3.mp4", "https://example.com/recording4.mp4"],
+        subjects: [
+            1: ["History", "Geography"],
+            2: ["Literature", "Language"]
+        ]
+    )
+]
+
 
 let testCourses = [
     Course(id: "1",
            name: "מתמטיקה",
            lectureTags: [
-               0: ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               2: ["גיאומטריה", "טריגונומטריה"],
-               3: ["סטטיסטיקה"]
+               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
+               ["גיאומטריה", "טריגונומטריה"],
+               ["סטטיסטיקה"]
            ],
            tutorialTags: [
-               1: ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               2: ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
-               3: ["בעיות סטטיסטיקה"]
+               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
+               ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
+               ["בעיות סטטיסטיקה"]
            ],
            lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
            lectureRecordingLinks: [["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com"], ["https://mathlecturerecordinglink2.com"]],
-           tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
+           tutorialLinks: [],
            tutorialRecordingLinks: [["https://mathtutorialrecordinglink1.com"], ["https://mathtutorialrecordinglink2.com"]]
 //           exams: testExams
         ),
     Course(id: "2",
            name: "מתמטיקה",
            lectureTags: [
-               1: ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               2: ["גיאומטריה", "טריגונומטריה"],
-               3: ["סטטיסטיקה"]
+               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
+               ["גיאומטריה", "טריגונומטריה"],
+               ["סטטיסטיקה"]
            ],
            tutorialTags: [
-               1: ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               2: ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
-               3: ["בעיות סטטיסטיקה"]
+               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
+               ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
+               ["בעיות סטטיסטיקה"]
            ],
            lectureLinks: [],
            lectureRecordingLinks: [],
