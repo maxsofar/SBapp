@@ -9,17 +9,15 @@ import SwiftUI
 
 struct MainViewToolbar: View {
     @ObservedObject var courses: Courses
-//    var viewModel: CourseViewModel
     
     var body: some View {
         HStack {
             NavigationLink {
-                FavoritesView(courses: courses)
+                Favorites(courses: courses)
             } label: {
                 Image(systemName: "star.circle")
                     .scaleEffect(1.8)
                     .foregroundColor(Color.secondary)
-
             }
             Spacer()
             NavigationLink {
@@ -30,15 +28,16 @@ struct MainViewToolbar: View {
                     .foregroundColor(Color.secondary)
             }
         }
-        .padding([.horizontal], 30)
-        .padding([.vertical], 15)
+        .padding(.horizontal, 30)
+        .padding(.vertical, 15)
     }
 }
 
-struct MainViewToolbar_Previews: PreviewProvider {
-    static var previews: some View {
-        let previewCourses = Courses()
-        return MainViewToolbar(courses: previewCourses)
-                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
-    }
-}
+//struct MainViewToolbar_Previews: PreviewProvider {
+//    static var previews: some View {
+//        NavigationStack {
+//            MainViewToolbar(courses: Courses(testCourses: testCourses))
+//                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
+//        }
+//    }
+//}

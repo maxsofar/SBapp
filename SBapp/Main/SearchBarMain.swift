@@ -12,8 +12,8 @@ struct SearchBarMain: View {
     @Binding var isEditing: Bool
     @Namespace var searchTransition
     var vGeometry: GeometryProxy
-//    @ObservedObject var viewModel: CourseViewModel
     let screenWidth = UIScreen.main.bounds.width
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         
@@ -33,9 +33,12 @@ struct SearchBarMain: View {
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
                 if !isEditing {
-                    Image("Foregrnd")
+                    Image(colorScheme == .light ? "Foregrnd" : "ForegrndDark")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .shadow(color: colorScheme == .light ?
+                                Color(red: 0.15, green: 0.2, blue: 0.4, opacity: 0.7) : Color(.sRGBLinear, white: 0, opacity: 0.53),
+                                radius: 2, x: 3, y: 0)
                         .allowsHitTesting(false)
                 }
             }
@@ -43,18 +46,17 @@ struct SearchBarMain: View {
     }
 }
 
-struct SearchBarMain_Previews: PreviewProvider {
-    static var previews: some View {
-        ContainerView()
-    }
-    
-    struct ContainerView: View {
-        @State private var isEditing = false
-        var courses = Courses()
-        var body: some View {
-            GeometryReader{ geometry in
-                SearchBarMain(courses: courses, isEditing: $isEditing, vGeometry: geometry)
-            }
-        }
-    }
-}
+//struct SearchBarMain_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ContainerView()
+//    }
+//
+//    struct ContainerView: View {
+//        @State private var isEditing = false
+//        var body: some View {
+//            GeometryReader{ geometry in
+//                SearchBarMain(courses: Courses(testCourses: testCourses), isEditing: $isEditing, vGeometry: geometry)
+//            }
+//        }
+//    }
+//}
