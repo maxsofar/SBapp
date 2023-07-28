@@ -57,10 +57,6 @@ struct FilterList: View {
     }
 }
 
-
-
-
-
 struct FilterList_Previews: PreviewProvider {
     static var previews: some View {
         @State var selectedTag: String?

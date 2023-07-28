@@ -9,10 +9,6 @@ import Foundation
 import SwiftCSV
 import SwiftSoup
 
-
-// URL of the CSV file on GitHub
-let csvURL = URL(string: "https://raw.githubusercontent.com/Cyanivde/StudyBuddy/main/courses.csv")!
-
 class Exam {
     var semesterYear: String
     var examFormLinks: [String]
@@ -41,6 +37,9 @@ class Course : ObservableObject, Identifiable, Equatable {
     var tutorialRecordingLinks: [[String]]
     var exams: [Exam]
     
+    #if DEBUG
+    @Published var isFavorite: Bool
+    #else
     @Published var isFavorite: Bool {
         didSet {
             // Save the state of isFavorite to UserDefaults when it changes
@@ -48,6 +47,7 @@ class Course : ObservableObject, Identifiable, Equatable {
             UserDefaults.standard.set(isFavorite, forKey: key)
         }
     }
+    #endif
     @Published var isComplete: [Bool] {
         didSet {
             // Save the state of isComplete to UserDefaults when it changes
@@ -55,6 +55,7 @@ class Course : ObservableObject, Identifiable, Equatable {
             UserDefaults.standard.set(isComplete, forKey: key)
         }
     }
+   
     
     init(
         id: String,
@@ -74,11 +75,13 @@ class Course : ObservableObject, Identifiable, Equatable {
         self.lectureTags = lectureTags
         self.tutorialTags = tutorialTags
         
-        // Load the state of isFavorite from UserDefaults when the course is initialized
+        #if DEBUG
+        self.isFavorite = isFavorite
+        #else
         let favoriteKey = "isFavorite_\(id)"
         self.isFavorite = UserDefaults.standard.bool(forKey: favoriteKey)
+        #endif
         
-        // Load the state of isComplete from UserDefaults when the course is initialized
         let completeKey = "isComplete_\(id)"
         self.isComplete = UserDefaults.standard.array(forKey: completeKey) as? [Bool] ?? Array(repeating: false, count: 13)
         
@@ -92,24 +95,24 @@ class Course : ObservableObject, Identifiable, Equatable {
 
 extension Course {
     var allTags: [String: [Int]] {
-            var tags: [String: [Int]] = [:]
-            for (weekNumber, lectureBadges) in lectureTags.enumerated() {
-                for lectureBadge in lectureBadges {
-                    tags[lectureBadge, default: []].append(weekNumber)
-                }
+        var tags: [String: [Int]] = [:]
+        for (weekNumber, lectureBadges) in lectureTags.enumerated() {
+            for lectureBadge in lectureBadges {
+                tags[lectureBadge, default: []].append(weekNumber)
             }
-            for (weekNumber, tutorialBadges) in tutorialTags.enumerated() {
-                for tutorialBadge in tutorialBadges {
-                    tags[tutorialBadge, default: []].append(weekNumber)
-                }
-            }
-            return tags
         }
+        for (weekNumber, tutorialBadges) in tutorialTags.enumerated() {
+            for tutorialBadge in tutorialBadges {
+                tags[tutorialBadge, default: []].append(weekNumber)
+            }
+        }
+        return tags
+    }
 
     
     static func == (lhs: Course, rhs: Course) -> Bool {
        return lhs.id == rhs.id
-   }
+    }
     
     func makeFavorite() {
         isFavorite.toggle()
@@ -267,15 +270,18 @@ extension Course {
         }
         task.resume()
     }
-
-
-
-
-
 }
 
 class Courses: ObservableObject {
     @Published var courses: [Course] = []
+    
+    init(from url: URL) {
+        loadCourses(from: url)
+    }
+    
+    init(testCourses: [Course]) {
+        self.courses = testCourses
+    }
 
     func loadCourses(from url: URL, completion: @escaping ([Course]) -> Void) {
         // Create a URLSession data task to load the data from the URL
@@ -317,6 +323,9 @@ class Courses: ObservableObject {
     }
     
     func loadCourses(from url: URL) {
+        if !courses.isEmpty {
+            return
+        }
         // Load the courses asynchronously using the loadCourses function
         loadCourses(from: url) { courses in
             // Update the courses property with the loaded courses on the main thread
@@ -360,72 +369,53 @@ let testExams: [Exam] = [
         ]
     )
 ]
-
-
 let testCourses = [
     Course(id: "1",
            name: "מתמטיקה",
-           lectureTags: [
-               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               ["גיאומטריה", "טריגונומטריה"],
-               ["סטטיסטיקה"]
-           ],
-           tutorialTags: [
-               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
-               ["בעיות סטטיסטיקה"]
-           ],
+           isFavorite: true,
+           lectureTags: [["אלגברה"],
+                         ["חשבון"],
+                         ["גיאומטריה"],
+                         ["טריגונומטריה"],
+                         ["סטטיסטיקה"]
+                        ],
+           tutorialTags: [["בעיות אלגברה"],
+                          ["בעיות חשבון"],
+                          ["בעיות גיאומטריה"],
+                          ["בעיות טריגונומטריה"],
+                          ["בעיות סטטיסטיקה"]
+                         ],
            lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
-           lectureRecordingLinks: [["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink1.com"], ["https://mathlecturerecordinglink2.com"]],
-           tutorialLinks: [],
-           tutorialRecordingLinks: [["https://mathtutorialrecordinglink1.com"], ["https://mathtutorialrecordinglink2.com"]]
-//           exams: testExams
-        ),
-    Course(id: "2",
-           name: "מתמטיקה",
-           lectureTags: [
-               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               ["גיאומטריה", "טריגונומטריה"],
-               ["סטטיסטיקה"]
+           lectureRecordingLinks: [
+            ["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink2.com"]
            ],
-           tutorialTags: [
-               ["Lorem ipsum dolor sit amet, consectetur adipiscing"],
-               ["בעיות גיאומטריה", "בעיות טריגונומטריה"],
-               ["בעיות סטטיסטיקה"]
-           ],
-           lectureLinks: [],
-           lectureRecordingLinks: [],
            tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
-           tutorialRecordingLinks: [["https://mathtutorialrecordinglink1.com"], ["https://mathtutorialrecordinglink2.com"]]
-//           exams: testExams
-        )
+           tutorialRecordingLinks: [
+            ["https://mathtutorialrecordinglink1.com", "https://mathtutorialrecordinglink2.com"]
+           ],
+           exams: testExams),
+    Course(
+           id: "2",
+           name: "פיזיקה",
+           isFavorite: true,
+           lectureTags: [["מכניקה"],
+                         ["תרמודינמיקה"],
+                         ["אלקטרומגנטיות"],
+                         ["אופטיקה"],
+                         ["מכניקה קוונטית"]
+                        ],
+           tutorialTags: [["בעיות מכניקה"],
+                          ["בעיות תרמודינמיקה"],
+                          ["בעיות אלקטרומגנטיות"],
+                          ["בעיות אופטיקה"],
+                          ["בעיות מכניקה קוונטית"]
+                         ],
+           lectureLinks: ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
+           lectureRecordingLinks: [
+                                    ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"]
+                                   ],
+           tutorialLinks: ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
+           tutorialRecordingLinks: [
+                                    ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]
+                                   ])
 ]
-
-
-//let testCourses = [
-//    Course(id: "1",
-//           name: "מתמטיקה",
-//           lectureTags: ["אלגברה", "חשבון", "גיאומטריה", "טריגונומטריה", "סטטיסטיקה"],
-//           tutorialTags: ["בעיות אלגברה", "בעיות חשבון", "בעיות גיאומטריה", "בעיות טריגונומטריה", "בעיות סטטיסטיקה"],
-//           lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
-//           lectureRecordingLinks: ["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink2.com"],
-//           tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
-//           tutorialRecordingLinks: ["https://mathtutorialrecordinglink1.com", "https://mathtutorialrecordinglink2.com"],
-//           exams: testExams),
-//    Course(id: "2",
-//           name: "פיזיקה",
-//           lectureTags: ["מכניקה", "תרמודינמיקה", "אלקטרומגנטיות", "אופטיקה", "מכניקה קוונטית"],
-//           tutorialTags: ["בעיות מכניקה", "בעיות תרמודינמיקה", "בעיות אלקטרומגנטיות", "בעיות אופטיקה", "בעיות מכניקה קוונטית"],
-//           lectureLinks: ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
-//           lectureRecordingLinks: ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"],
-//           tutorialLinks: ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
-//           tutorialRecordingLinks: ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]),
-//    Course(id: "3",
-//           name: "כימיה",
-//           lectureTags: ["כימיה אורגנית", "כימיה לא אורגנית", "כימיה פיזיקלית", "ביו-כימיה", "אנליזה כימי"],
-//           tutorialTags: ["בעיות כימיה אורגני", "בעיות כимия לא אורגני", "בעיות כמי פיזאלי"," בעיות ביו-חמי"," בעיות אנלאל חמי"],
-//           lectureLinks: ["https://chemistrylecturelink1.com", "https://chemistrylecturelink2.com"],
-//           lectureRecordingLinks: ["https://chemistrylecturerecordinglink1.com", "https://chemistrylecturerecordinglink2.com"],
-//           tutorialLinks: ["https://chemistrytutoriallink1.com", "https://chemistrytutoriallink2.com"],
-//           tutorialRecordingLinks: ["https://chemistrytutorialrecordinglink1.com", "https://chemistrytutorialrecordinglink2.com"])
-//]

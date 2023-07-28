@@ -19,9 +19,7 @@ struct SearchBar: View {
     @State private var phase: CGFloat = 165
     @State var showList = false
     var geoHeight: CGFloat
-//    @Namespace private var searchTransition
-    
-//    @State var selectedTag: String? = nil
+    @Namespace private var searchTransition
     
     var body: some View {
         VStack {
@@ -45,6 +43,7 @@ struct SearchBar: View {
                     ZStack {
                         Capsule(style: .circular)
                             .fill(colorScheme == .dark ? Color.init(white: 0.3) : Color.init(white: 0.9))
+                            .shadow(radius: textFieldIsFocused ? 0 : 5, x: 0, y: textFieldIsFocused ? 0 : 4)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 25)
                                     .strokeBorder(.blue, style: StrokeStyle(lineWidth: 4, dash: [100, 1000], dashPhase: phase))
@@ -95,27 +94,28 @@ struct SearchBar: View {
                         Text(course.name)
                     }
                 }
+                .matchedGeometryEffect(id: "list", in: searchTransition)
             }
         }
     }
 }
 
-//struct SearchBar_Previews: PreviewProvider {
-//    static var previews: some View {
-//        @State var isEditing = false
-//        @State var backButton = false
-//        @State var isListShown = false
-//        @State var searchResults: [Course] = []
-//        let previewCourses = Courses()
-//        previewCourses.courses = [
-//                Course(id: "11", name: "Matam", lectureTags: ["Atoms", "Leibniz", "Gamma", "Dopler"], tutorialTags: ["Pascal", "Einstein", "Mu", "Foo"]),
-//                Course(id: "12", name: "Infi1"),
-//                Course(id: "13", name: "Physics1m")
-//            ]
-//        return
-//            SearchBar(courses: previewCourses, isEditing: $isEditing, geoHeight: 60)
-//    }
-//}
+struct SearchBar_Previews: PreviewProvider {
+    struct PreviewView: View {
+            @State var isEditing = false
+            @State var backButton = false
+            @State var isListShown = false
+            @State var searchResults: [Course] = []
+            
+            var body: some View {
+                SearchBar(courses: Courses(testCourses: testCourses), isEditing: $isEditing, geoHeight: 60)
+            }
+        }
+        
+    static var previews: some View {
+        PreviewView()
+    }
+}
 
 
 public extension UITextField {

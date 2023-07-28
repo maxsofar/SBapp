@@ -13,7 +13,6 @@ struct ActivityIndicatorView: UIViewRepresentable {
         activityIndicator.startAnimating()
         return activityIndicator
     }
-
     func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {}
 }
 
@@ -42,47 +41,6 @@ struct ChecklistToggleStyle: ToggleStyle {
                     let generator = UIImpactFeedbackGenerator(style: .light)
                     generator.impactOccurred()
                 }
-        }
-    }
-}
-
-struct ToolbarButtons: View {
-    @ObservedObject var course: Course
-    @Binding var selectedTag: String?
-    @Binding var showFilterButton: Bool
-    @State var showingModal = false
-    
-    var body: some View {
-        HStack {
-            favoriteButton
-            if showFilterButton {
-                filterButton
-            }
-        }
-    }
-    
-    private var favoriteButton: some View {
-        Button{
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-            course.makeFavorite()
-        } label: {
-            Image(systemName: course.isFavorite ? "star.fill" : "star")
-                .scaleEffect(1.2)
-        }
-    }
-    
-    private var filterButton: some View {
-        Button() {
-            showingModal.toggle()
-        } label: {
-            Image(systemName: selectedTag == nil ? "line.3.horizontal.decrease.circle"
-                    : "line.3.horizontal.decrease.circle.fill"
-            )
-                .scaleEffect(1.2)
-        }
-        .sheet(isPresented: $showingModal) {
-            FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal)
         }
     }
 }
@@ -152,9 +110,7 @@ struct LessonsView: View {
         }
         .onAppear {
             showActivityIndicator = true
-            
             course.scrape(){
-                
                 showActivityIndicator = false
             }
         }
@@ -193,33 +149,6 @@ struct LessonsView: View {
         .padding(.horizontal, 10)
         .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
         .cornerRadius(10)
-    }
-    
-    
-    
-    private var favoriteButton: some View {
-        Button{
-            let generator = UIImpactFeedbackGenerator(style: .light)
-            generator.impactOccurred()
-            course.makeFavorite()
-        } label: {
-            Image(systemName: course.isFavorite ? "star.fill" : "star")
-                .scaleEffect(1.2)
-        }
-    }
-    
-    private var filterButton: some View {
-        Button() {
-            showingModal.toggle()
-        } label: {
-            Image(systemName: selectedTag == nil ? "line.3.horizontal.decrease.circle"
-                  : "line.3.horizontal.decrease.circle.fill"
-            )
-                .scaleEffect(1.2)
-        }
-        .sheet(isPresented: $showingModal) {
-            LazyView(FilterList(course: course, selectedTag: $selectedTag, showingModal: $showingModal))
-        }
     }
 }
 

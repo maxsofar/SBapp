@@ -7,17 +7,10 @@
 
 import SwiftUI
 
-struct NoBlinkButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-    }
-}
-
 struct CourseView: View {
     @State private var selection = 0
-    @State private var showingModal = false
     @State private var selectedTag: String?
-    @State var showFilterButton = true    
+    @State private var showFilterButton = true
     @ObservedObject var course: Course
     @Environment(\.colorScheme) var colorScheme
     
@@ -31,53 +24,15 @@ struct CourseView: View {
 //                ExamsView(course: course)
 //                    .transition(.move(edge: .trailing))
             }
-            
-            // Custom tab bar
             VStack {
                 Spacer()
-                ZStack() {
-                    HStack {
-                        Button {
-                            withAnimation(.easeInOut(duration: 0.35)){
-                                selection = 0
-                            }
-                        } label: {
-                            Label("Lessons", systemImage: "list.bullet")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .buttonStyle(NoBlinkButtonStyle())
-                        .foregroundColor(selection == 0 ? .accentColor : .primary)
-                        
-                        Button{
-                            withAnimation(.easeInOut(duration: 0.35)){
-                                selection = 1
-                            }
-                        } label: {
-                            Label("Exams", systemImage: "doc.text")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .buttonStyle(NoBlinkButtonStyle())
-                        .foregroundColor(selection == 1 ? .accentColor : .primary)
-                        
-                    }
-                    .frame(height: 45)
-                    
-                    RoundedRectangle(cornerRadius: 20)
-                        .frame(width: 100, height: 3)
-                        .foregroundColor(.blue)
-                        .position(x: selection == 0 ? UIScreen.main.bounds.width / 4 : UIScreen.main.bounds.width / 4 * 3)
-                        .animation(.spring(response: 0.5, dampingFraction: 0.55, blendDuration: 0), value: selection)
-                }
-                .background(.bar)
-            .frame(height: 45)
+                CustomTabBar(selection: $selection)
             }
         }
         .navigationTitle(course.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItemGroup {
-                ToolbarButtons(course: course, selectedTag: $selectedTag, showFilterButton: $showFilterButton)
-            }
+            ToolbarButtons(course: course, selectedTag: $selectedTag, showFilterButton: $showFilterButton)
         }
         .onChange(of: selection) { newValue in
                    // Update the showFilterButton property when the selected tab changes
