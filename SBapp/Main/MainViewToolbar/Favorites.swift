@@ -19,7 +19,6 @@ struct Favorites: View {
          }
          .onAppear {
              favoriteCourses = courses.courses.filter{$0.isFavorite}
-             print (courses.courses[0].isFavorite)
          }
          .navigationTitle("Favorites")
          .navigationBarTitleDisplayMode(.large)

@@ -17,7 +17,6 @@ struct SearchBarButtons: View {
     @Binding var isEditing: Bool
     @Binding var searchText: String
     @Binding var backButton: Bool
-    @Binding var alignment: Bool
     @Binding var showList: Bool
     var body: some View {
         HStack {
@@ -28,7 +27,6 @@ struct SearchBarButtons: View {
                     searchText = ""
                     withAnimation(.easeInOut(duration: 0.5)) {
                         isEditing = false
-                        alignment = false
                         showList = false
                     }
                     
@@ -69,7 +67,6 @@ struct SearchBarBackground_Previews: PreviewProvider {
         @State var isEditing = false
         @State var searchText = ""
         @State var backButton = true
-        @State var alignment: Bool = false
         @State var showList = false
 
         var body: some View {
@@ -77,7 +74,6 @@ struct SearchBarBackground_Previews: PreviewProvider {
                 isEditing: $isEditing,
                 searchText: $searchText,
                 backButton: $backButton,
-                alignment: $alignment,
                 showList: $showList
             )
                 .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))

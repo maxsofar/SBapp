@@ -9,19 +9,37 @@ import Foundation
 import SwiftCSV
 import SwiftSoup
 
+enum Semester: String {
+    case winter = "Winter"
+    case spring = "Spring"
+    case summer = "Summer"
+}
+
 class Exam {
-    var semesterYear: String
+    var semester: Semester
+    var year: String
     var examFormLinks: [String]
     var solutionLinks: [String]
+    var scanLinks: [String]
     var recordingLinks: [String]
-    var subjects: [Int: [String]]
+    var tags: [[String]]
 
-    init(semesterYear: String, examFormLinks: [String], solutionLinks: [String], recordingLinks: [String], subjects: [Int: [String]]) {
-        self.semesterYear = semesterYear
+    init(
+        semester: Semester,
+        year: String,
+        examFormLinks: [String],
+        solutionLinks: [String],
+        scanLinks: [String],
+        recordingLinks: [String],
+        tags: [[String]]
+    ) {
+        self.semester = semester
+        self.year = year
         self.examFormLinks = examFormLinks
         self.solutionLinks = solutionLinks
+        self.scanLinks = scanLinks
         self.recordingLinks = recordingLinks
-        self.subjects = subjects
+        self.tags = tags
     }
 }
 
@@ -37,9 +55,6 @@ class Course : ObservableObject, Identifiable, Equatable {
     var tutorialRecordingLinks: [[String]]
     var exams: [Exam]
     
-    #if DEBUG
-    @Published var isFavorite: Bool
-    #else
     @Published var isFavorite: Bool {
         didSet {
             // Save the state of isFavorite to UserDefaults when it changes
@@ -47,7 +62,7 @@ class Course : ObservableObject, Identifiable, Equatable {
             UserDefaults.standard.set(isFavorite, forKey: key)
         }
     }
-    #endif
+
     @Published var isComplete: [Bool] {
         didSet {
             // Save the state of isComplete to UserDefaults when it changes
@@ -56,7 +71,6 @@ class Course : ObservableObject, Identifiable, Equatable {
         }
     }
    
-    
     init(
         id: String,
         name: String,
@@ -75,12 +89,8 @@ class Course : ObservableObject, Identifiable, Equatable {
         self.lectureTags = lectureTags
         self.tutorialTags = tutorialTags
         
-        #if DEBUG
-        self.isFavorite = isFavorite
-        #else
         let favoriteKey = "isFavorite_\(id)"
         self.isFavorite = UserDefaults.standard.bool(forKey: favoriteKey)
-        #endif
         
         let completeKey = "isComplete_\(id)"
         self.isComplete = UserDefaults.standard.array(forKey: completeKey) as? [Bool] ?? Array(repeating: false, count: 13)
@@ -226,50 +236,50 @@ extension Course {
         task.resume()
     }
 
-    func scrapeExams(completion: @escaping () -> Void) {
-        var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/exams")!)
-        request.httpMethod = "GET"
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
-            defer {
-                completion()
-            }
-            guard let data = data, error == nil else {
-                print("Error downloading HTML: \(error?.localizedDescription ?? "Unknown error")")
-                return
-            }
-
-            if let html = String(data: data, encoding: .utf8) {
-                do {
-                    let document = try SwiftSoup.parse(html)
-                    // Use SwiftSoup to extract the data from the HTML
-                    let rows = try document.select("tr.course-tr")
-
-                    for row in rows {
-                        let semesterYear = try row.select("td").first()?.text() ?? ""
-                        let examFormLinks = try row.select("td a").array().map { try $0.attr("href") }
-                        let solutionLinks = try row.select("td a").array().map { try $0.attr("href") }
-                        let recordingLinks = try row.select("td a").array().map { try $0.attr("href") }
-                        var subjects: [Int: [String]] = [:]
-                        for (index, element) in try row.select("button.badge").array().enumerated() {
-                            let subject = try element.text()
-                            subjects[index + 1, default: []].append(subject)
-                        }
-
-                        // Create an Exam instance with the extracted data
-                        let exam = Exam(semesterYear: semesterYear, examFormLinks: examFormLinks, solutionLinks: solutionLinks, recordingLinks: recordingLinks, subjects: subjects)
-                        // Add the Exam instance to an array of exams
-                        self.exams.append(exam)
-                    }
-                } catch {
-                    print("Error parsing HTML: \(error.localizedDescription)")
-                }
-            } else {
-                print("Error converting data to string")
-            }
-        }
-        task.resume()
-    }
+//    func scrapeExams(completion: @escaping () -> Void) {
+//        var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/exams")!)
+//        request.httpMethod = "GET"
+//
+//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//            defer {
+//                completion()
+//            }
+//            guard let data = data, error == nil else {
+//                print("Error downloading HTML: \(error?.localizedDescription ?? "Unknown error")")
+//                return
+//            }
+//
+//            if let html = String(data: data, encoding: .utf8) {
+//                do {
+//                    let document = try SwiftSoup.parse(html)
+//                    // Use SwiftSoup to extract the data from the HTML
+//                    let rows = try document.select("tr.course-tr")
+//
+//                    for row in rows {
+//                        let year = try row.select("td").first()?.text() ?? ""
+//                        let examFormLinks = try row.select("td a").array().map { try $0.attr("href") }
+//                        let solutionLinks = try row.select("td a").array().map { try $0.attr("href") }
+//                        let recordingLinks = try row.select("td a").array().map { try $0.attr("href") }
+//                        var subjects: [Int: [String]] = [:]
+//                        for (index, element) in try row.select("button.badge").array().enumerated() {
+//                            let subject = try element.text()
+//                            subjects[index + 1, default: []].append(subject)
+//                        }
+//
+//                        // Create an Exam instance with the extracted data
+//                        let exam = Exam(year: year, examFormLinks: examFormLinks, solutionLinks: solutionLinks, recordingLinks: recordingLinks, subjects: subjects)
+//                        // Add the Exam instance to an array of exams
+//                        self.exams.append(exam)
+//                    }
+//                } catch {
+//                    print("Error parsing HTML: \(error.localizedDescription)")
+//                }
+//            } else {
+//                print("Error converting data to string")
+//            }
+//        }
+//        task.resume()
+//    }
 }
 
 class Courses: ObservableObject {
@@ -349,23 +359,26 @@ class Courses: ObservableObject {
 
 let testExams: [Exam] = [
     Exam(
-        semesterYear: "2022-2023",
+        semester: Semester.spring,
+        year: "2022-2023",
         examFormLinks: ["https://example.com/exam1.pdf", "https://example.com/exam2.pdf"],
         solutionLinks: ["https://example.com/solution1.pdf", "https://example.com/solution2.pdf"],
-        recordingLinks: ["https://example.com/recording1.mp4", "https://example.com/recording2.mp4"],
-        subjects: [
-            1: ["Mathematics", "Physics"],
-            2: ["Chemistry", "Biology"]
+        scanLinks: ["https://example.com/recording1.mp4", "https://example.com/recording2.mp4"],
+        recordingLinks: ["https://example.com/scan1.pdf", "https://example.com/scan2.pdf"],
+        tags: [
+            ["Mathematics", "Physics"],
+            ["Chemistry", "Biology"]
         ]
     ),
     Exam(
-        semesterYear: "2023-2024",
+        semester: Semester.winter,
+        year: "2023-2024",
         examFormLinks: ["https://example.com/exam3.pdf", "https://example.com/exam4.pdf"],
         solutionLinks: ["https://example.com/solution3.pdf", "https://example.com/solution4.pdf"],
-        recordingLinks: ["https://example.com/recording3.mp4", "https://example.com/recording4.mp4"],
-        subjects: [
-            1: ["History", "Geography"],
-            2: ["Literature", "Language"]
+        scanLinks: ["https://example.com/scan3.pdf", "https://example.com/scan4.pdf"], recordingLinks: ["https://example.com/recording3.mp4", "https://example.com/recording4.mp4"],
+        tags: [
+            ["History", "Geography"],
+            ["Literature", "Language"]
         ]
     )
 ]

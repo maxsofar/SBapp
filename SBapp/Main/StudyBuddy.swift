@@ -39,7 +39,7 @@ struct StudyBuddy: View {
                                 )
                                 .padding(20)
                         }
-                        SearchBarMain(
+                        SearchBarArea(
                             courses: courses,
                             isEditing: $isEditing,
                             vGeometry: vGeometry
@@ -53,6 +53,9 @@ struct StudyBuddy: View {
                     }
                     .navigationDestination(isPresented: $readyToNavigate) {
                         Favorites(courses: courses)
+                            .onDisappear {
+                               ActionService.shared.action = nil
+                           }
                     }
                 }
             }
@@ -78,5 +81,3 @@ struct ContentView_Previews: PreviewProvider {
         StudyBuddy()
     }
 }
-
-

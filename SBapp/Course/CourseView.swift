@@ -13,7 +13,7 @@ struct CourseView: View {
     @State private var showFilterButton = true
     @ObservedObject var course: Course
     @Environment(\.colorScheme) var colorScheme
-    
+
     var body: some View {
         ZStack {
             if selection == 0 {
@@ -29,10 +29,19 @@ struct CourseView: View {
                 CustomTabBar(selection: $selection)
             }
         }
+        //use cutom back button until long title thing fixed
+//        .navigationBarBackButtonHidden(true)
+//        .navigationBarItems(leading: BackButton(isTitleTooLong: course.name.count > 25))
+        //---------------------
         .navigationTitle(course.name)
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarButtons(course: course, selectedTag: $selectedTag, showFilterButton: $showFilterButton)
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                FavoriteButton(course: course)
+                if showFilterButton {
+                    FilterButton(course: course, selectedTag: $selectedTag)
+                }
+            }
         }
         .onChange(of: selection) { newValue in
                    // Update the showFilterButton property when the selected tab changes

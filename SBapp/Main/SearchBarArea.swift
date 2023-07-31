@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-struct SearchBarMain: View {
+struct SearchBarArea: View {
     @ObservedObject var courses: Courses
     @Binding var isEditing: Bool
     @Namespace var searchTransition
     var vGeometry: GeometryProxy
-    let screenWidth = UIScreen.main.bounds.width
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -27,8 +26,9 @@ struct SearchBarMain: View {
                 SearchBar(
                     courses: courses,
                     isEditing: $isEditing,
-                    geoHeight:  vGeometry.size.height * 0.08
+                    searchBarHeight: vGeometry.size.height * 0.08
                 )
+                
                 .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
