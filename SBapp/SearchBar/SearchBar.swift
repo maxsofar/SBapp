@@ -110,7 +110,6 @@ struct SearchBar: View {
                 }
             }
             .frame(height: searchBarHeight)
-            .toolbar { }
             if showList {
                 List(searchViewModel.searchResults) { course in
                     NavigationLink(destination:
@@ -119,6 +118,7 @@ struct SearchBar: View {
                         Text(course.name)
                     }
                 }
+                .environment(\.layoutDirection, .rightToLeft)
                 .matchedGeometryEffect(id: "list", in: searchTransition)
             }
         }

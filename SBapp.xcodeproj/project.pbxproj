@@ -18,6 +18,7 @@
 		504C268E2A687EA400F59DB2 /* CourseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504C268D2A687EA400F59DB2 /* CourseView.swift */; };
 		504F0AA42A655AAC0091D4CC /* ExamsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504F0AA32A655AAC0091D4CC /* ExamsView.swift */; };
 		504F0AA62A655CB20091D4CC /* ExamDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 504F0AA52A655CB20091D4CC /* ExamDetailView.swift */; };
+		505FC1DF2A7BD62900C09692 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 505FC1DE2A7BD62900C09692 /* Launch Screen.storyboard */; };
 		506A8E2A2A50B76F00938555 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 506A8E292A50B76F00938555 /* LoginView.swift */; };
 		507D1E332A574368003CB6D4 /* Favorites.swift in Sources */ = {isa = PBXBuildFile; fileRef = 507D1E322A574368003CB6D4 /* Favorites.swift */; };
 		5086ABC42A74456E00A5113A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5086ABC32A74456E00A5113A /* AppDelegate.swift */; };
@@ -31,6 +32,7 @@
 		50D496412A6717D700977A82 /* SwiftSoup in Frameworks */ = {isa = PBXBuildFile; productRef = 50D496402A6717D700977A82 /* SwiftSoup */; };
 		50DF13262A4F05CD00CBCC14 /* SearchBarButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */; };
 		50E1A5122A5D779C007E8C21 /* MainViewToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */; };
+		50F338C22A7929E200359895 /* Mali-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50F338C12A7929E200359895 /* Mali-Regular.ttf */; };
 		50F4380A2A459A2400499500 /* LessonsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F438092A459A2400499500 /* LessonsView.swift */; };
 		50F4380C2A459AB600499500 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F4380B2A459AB600499500 /* WeekView.swift */; };
 		50F76D6F2A5DF57400CABE11 /* SearchBarArea.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50F76D6E2A5DF57400CABE11 /* SearchBarArea.swift */; };
@@ -49,6 +51,7 @@
 		504C268D2A687EA400F59DB2 /* CourseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CourseView.swift; sourceTree = "<group>"; };
 		504F0AA32A655AAC0091D4CC /* ExamsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamsView.swift; sourceTree = "<group>"; };
 		504F0AA52A655CB20091D4CC /* ExamDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExamDetailView.swift; sourceTree = "<group>"; };
+		505FC1DE2A7BD62900C09692 /* Launch Screen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
 		506A8E292A50B76F00938555 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		507D1E322A574368003CB6D4 /* Favorites.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Favorites.swift; sourceTree = "<group>"; };
 		5086ABC32A74456E00A5113A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -62,6 +65,7 @@
 		50AA948F2A4EBB080089AB8B /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		50DF13252A4F05CD00CBCC14 /* SearchBarButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarButtons.swift; sourceTree = "<group>"; };
 		50E1A5112A5D779C007E8C21 /* MainViewToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewToolbar.swift; sourceTree = "<group>"; };
+		50F338C12A7929E200359895 /* Mali-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Mali-Regular.ttf"; sourceTree = "<group>"; };
 		50F438092A459A2400499500 /* LessonsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LessonsView.swift; sourceTree = "<group>"; };
 		50F4380B2A459AB600499500 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		50F76D6E2A5DF57400CABE11 /* SearchBarArea.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBarArea.swift; sourceTree = "<group>"; };
@@ -101,7 +105,9 @@
 		502E56962A437C9300DFD6ED /* SBapp */ = {
 			isa = PBXGroup;
 			children = (
+				50F338C12A7929E200359895 /* Mali-Regular.ttf */,
 				501EA6AC2A74009B00F46230 /* Info.plist */,
+				505FC1DE2A7BD62900C09692 /* Launch Screen.storyboard */,
 				502E56972A437C9300DFD6ED /* SBApp.swift */,
 				5086ABC52A74512900A5113A /* Action.swift */,
 				5086ABC32A74456E00A5113A /* AppDelegate.swift */,
@@ -254,6 +260,8 @@
 			files = (
 				502E569F2A437C9400DFD6ED /* Preview Assets.xcassets in Resources */,
 				50A042F52A62946A00F9E50A /* Localizable.strings in Resources */,
+				50F338C22A7929E200359895 /* Mali-Regular.ttf in Resources */,
+				505FC1DF2A7BD62900C09692 /* Launch Screen.storyboard in Resources */,
 				502E569C2A437C9400DFD6ED /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -433,9 +441,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SBapp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -463,9 +472,10 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SBapp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.education";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (

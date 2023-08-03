@@ -28,7 +28,6 @@ struct SearchBarArea: View {
                     isEditing: $isEditing,
                     searchBarHeight: vGeometry.size.height * 0.08
                 )
-                
                 .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
