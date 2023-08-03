@@ -20,7 +20,7 @@ struct StudyBuddy: View {
     @Environment(\.scenePhase) var scenePhase
     @State private var showSplash = true
     @State private var scale: CGFloat = 0.9
-    @State private var offset: CGFloat = 0
+    @State private var offset: CGFloat = UIScreen.main.bounds.height / 2.85
     @State private var hasAnimated: Bool = false
     
     var body: some View {
@@ -36,29 +36,30 @@ struct StudyBuddy: View {
                                 .ignoresSafeArea()
 
                         } else {
-                            Image(colorScheme == .light ? "Back" : "BackDark")
+                            Image("Back")
                                 .resizable()
                                 .ignoresSafeArea(.all)
                                 .scaledToFill()
                                 .transition(.opacity)
-
                         }
                     }
                     VStack {
                         if !isEditing {
                             MainViewToolbar(courses: courses)
                                 .opacity(showSplash ? 0 : 1)
-                            
+                            Title(hasAnimated: $hasAnimated)
+//                                .position(x: vGeometry.size.width / 2, y: position)
+                                .offset(y: offset)
+                                .scaleEffect(scale)
                         }
+                            
                             SearchBarArea(
                                 courses: courses,
                                 isEditing: $isEditing,
                                 vGeometry: vGeometry
                             )
-                            .padding(.top, isEditing ? 0 : 150)
                             .matchedGeometryEffect(id: "searchBar", in: searchTransition)
                             .opacity(showSplash ? 0 : 1)
-//                            .matchedGeometryEffect(id: "searchBar", in: splash)
                         
                     }
                     .onChange(of: scenePhase) { newValue in
@@ -72,25 +73,19 @@ struct StudyBuddy: View {
                                ActionService.shared.action = nil
                            }
                     }
-                    if !isEditing {
-                        Title(hasAnimated: $hasAnimated)
-                            .position(x: vGeometry.size.width / 2, y: vGeometry.size.height / 2)
-                            .offset(y: -offset)
-                            .scaleEffect(scale)
-                    }
                 }
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            self.scale  = UIScreen.main.bounds.width / 380
-                            self.offset = 270
-//                            self.scale  = UIScreen.main.bounds.width / 650
-//                            self.offset = 630
+                    if !hasAnimated {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.3) {
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                self.scale  = UIScreen.main.bounds.width / 380
+                                self.offset = 0
+                            }
                         }
-                    }
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
-                        withAnimation(.easeInOut(duration: 0.8)) {
-                            self.showSplash = false
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.4) {
+                            withAnimation(.easeInOut(duration: 0.8)) {
+                                self.showSplash = false
+                            }
                         }
                     }
                 }

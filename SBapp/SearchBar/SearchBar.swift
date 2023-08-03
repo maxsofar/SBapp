@@ -25,7 +25,7 @@ struct CapsuleStyle: View {
             .shadow(radius: isEditing ? 0 : 5, x: 0, y: isEditing ? 0 : 4)
             .overlay(
                 Capsule(style: .circular)
-                    .strokeBorder(Color.init(white: 0.7), style: StrokeStyle(lineWidth: 3, dash: [100, 1000], dashPhase: phase))
+                    .strokeBorder(Color.accentColor, style: StrokeStyle(lineWidth: 3, dash: [100, 1000], dashPhase: phase))
             )
             .padding(.horizontal, 5)
     }

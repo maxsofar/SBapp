@@ -75,19 +75,17 @@ class Course : ObservableObject, Identifiable, Equatable {
         id: String,
         name: String,
         isFavorite: Bool = false,
-        lectureTags: [[String]] = [],
-        tutorialTags: [[String]] = [],
-        lectureLinks: [String] = [],
-        lectureRecordingLinks: [[String]] = [],
-        tutorialLinks: [String] = [],
-        tutorialRecordingLinks: [[String]] = [],
+//        lectureTags: [[String]] = [],
+//        tutorialTags: [[String]] = [],
+//        lectureLinks: [String] = [],
+//        lectureRecordingLinks: [[String]] = [],
+//        tutorialLinks: [String] = [],
+//        tutorialRecordingLinks: [[String]] = [],
         exams: [Exam] = []
     ) {
         
         self.id = id
         self.name = name
-        self.lectureTags = lectureTags
-        self.tutorialTags = tutorialTags
         
         let favoriteKey = "isFavorite_\(id)"
         self.isFavorite = UserDefaults.standard.bool(forKey: favoriteKey)
@@ -95,10 +93,12 @@ class Course : ObservableObject, Identifiable, Equatable {
         let completeKey = "isComplete_\(id)"
         self.isComplete = UserDefaults.standard.array(forKey: completeKey) as? [Bool] ?? Array(repeating: false, count: 13)
         
-        self.lectureLinks = lectureLinks
-        self.lectureRecordingLinks = lectureRecordingLinks
-        self.tutorialLinks = tutorialLinks
-        self.tutorialRecordingLinks = tutorialRecordingLinks
+        self.lectureTags = Array(repeating: [], count: 13)
+        self.tutorialTags = Array(repeating: [], count: 13)
+        self.lectureLinks = []
+        self.lectureRecordingLinks = Array(repeating: [], count: 13)
+        self.tutorialLinks = []
+        self.tutorialRecordingLinks = Array(repeating: [], count: 13)
         self.exams = exams
     }
 }
@@ -142,14 +142,12 @@ extension Course {
         isComplete[week - 1] = value
     }
 
-    
     func scrape(completion: @escaping () -> Void) {
         if !lectureLinks.isEmpty || !tutorialLinks.isEmpty  {
             defer { completion() }
             // The links have already been fetched, so return early
             return
         }
-
         var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/lessons")!)
         request.httpMethod = "GET"
 
@@ -165,13 +163,15 @@ extension Course {
             if let html = String(data: data, encoding: .utf8) {
                 do {
                     let document = try SwiftSoup.parse(html)
-                    // Use SwiftSoup to extract the data from the HTML
                     let rows = try document.select("tr.course-tr")
 
                     var lectureWeekNumber = 0
                     var tutorialWeekNumber = -1
 
                     for row in rows {
+                        if lectureWeekNumber > 12 || tutorialWeekNumber > 12 {
+                            break
+                        }
                         let isLectureRow = try row.select("a").first()?.text().contains("הרצאה") ?? false
 
                         for link in try row.select("td a") {
@@ -184,17 +184,9 @@ extension Course {
                                 self.tutorialLinks.append(href)
                             } else if text.contains("הקלטה") {
                                 if isLectureRow {
-                                    if self.lectureRecordingLinks.count <= lectureWeekNumber {
-                                        self.lectureRecordingLinks.append([])
-                                    }
                                     self.lectureRecordingLinks[lectureWeekNumber].append(href)
                                 } else {
-                                    if self.tutorialRecordingLinks.count <= tutorialWeekNumber {
-                                        self.tutorialRecordingLinks.append([])
-                                    }
-                                    if tutorialWeekNumber >= 0 && tutorialWeekNumber < self.tutorialRecordingLinks.count {
-                                        self.tutorialRecordingLinks[tutorialWeekNumber].append(href)
-                                    }
+                                    self.tutorialRecordingLinks[tutorialWeekNumber].append(href)
                                 }
                             }
                         }
@@ -203,23 +195,11 @@ extension Course {
                             let badgeText = try badge.text()
 
                             if isLectureRow {
-                                // Check if the lectureTags array has enough inner arrays
-                                while self.lectureTags.count <= lectureWeekNumber {
-                                    self.lectureTags.append([])
-                                }
-                                // Append the badgeText to the inner array at index lectureWeekNumber
                                 self.lectureTags[lectureWeekNumber].append(badgeText)
                             } else {
-                                // Check if the tutorialTags array has enough inner arrays
-                                while self.tutorialTags.count <= tutorialWeekNumber {
-                                    self.tutorialTags.append([])
-                                }
-                                // Append the badgeText to the inner array at index tutorialWeekNumber
                                 self.tutorialTags[tutorialWeekNumber].append(badgeText)
                             }
-
                         }
-
                         if isLectureRow {
                             lectureWeekNumber += 1
                         } else {
@@ -230,11 +210,104 @@ extension Course {
                     print("Error parsing HTML: \(error.localizedDescription)")
                 }
             } else {
-                print("Error converting data to string")
             }
         }
         task.resume()
     }
+
+    
+//    func scrape(completion: @escaping () -> Void) {
+//        if !lectureLinks.isEmpty || !tutorialLinks.isEmpty  {
+//            defer { completion() }
+//            // The links have already been fetched, so return early
+//            return
+//        }
+//
+//        var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/lessons")!)
+//        request.httpMethod = "GET"
+//
+//        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+//            defer {
+//                completion()
+//            }
+//            guard let data = data, error == nil else {
+//                print("Error downloading HTML: \(error?.localizedDescription ?? "Unknown error")")
+//                return
+//            }
+//
+//            if let html = String(data: data, encoding: .utf8) {
+//                do {
+//                    let document = try SwiftSoup.parse(html)
+//                    // Use SwiftSoup to extract the data from the HTML
+//                    let rows = try document.select("tr.course-tr")
+//
+//                    var lectureWeekNumber = 0
+//                    var tutorialWeekNumber = -1
+//
+//                    for row in rows {
+//                        let isLectureRow = try row.select("a").first()?.text().contains("הרצאה") ?? false
+//
+//                        for link in try row.select("td a") {
+//                            let href = try link.attr("href")
+//                            let text = try link.text()
+//
+//                            if text.contains("הרצאה") {
+//                                self.lectureLinks.append(href)
+//                            } else if text.contains("תרגול") {
+//                                self.tutorialLinks.append(href)
+//                            } else if text.contains("הקלטה") {
+//                                if isLectureRow {
+//                                    if self.lectureRecordingLinks.count <= lectureWeekNumber {
+//                                        self.lectureRecordingLinks.append([])
+//                                    }
+//                                    self.lectureRecordingLinks[lectureWeekNumber].append(href)
+//                                } else {
+//                                    if self.tutorialRecordingLinks.count <= tutorialWeekNumber {
+//                                        self.tutorialRecordingLinks.append([])
+//                                    }
+//                                    if tutorialWeekNumber >= 0 && tutorialWeekNumber < self.tutorialRecordingLinks.count {
+//                                        self.tutorialRecordingLinks[tutorialWeekNumber].append(href)
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        for badge in try row.select("button.badge") {
+//                            let badgeText = try badge.text()
+//
+//                            if isLectureRow {
+//                                // Check if the lectureTags array has enough inner arrays
+//                                while self.lectureTags.count <= lectureWeekNumber {
+//                                    self.lectureTags.append([])
+//                                }
+//                                // Append the badgeText to the inner array at index lectureWeekNumber
+//                                self.lectureTags[lectureWeekNumber].append(badgeText)
+//                            } else {
+//                                // Check if the tutorialTags array has enough inner arrays
+//                                while self.tutorialTags.count <= tutorialWeekNumber {
+//                                    self.tutorialTags.append([])
+//                                }
+//                                // Append the badgeText to the inner array at index tutorialWeekNumber
+//                                self.tutorialTags[tutorialWeekNumber].append(badgeText)
+//                            }
+//
+//                        }
+//
+//                        if isLectureRow {
+//                            lectureWeekNumber += 1
+//                        } else {
+//                            tutorialWeekNumber += 1
+//                        }
+//                    }
+//                } catch {
+//                    print("Error parsing HTML: \(error.localizedDescription)")
+//                }
+//            } else {
+//                print("Error converting data to string")
+//            }
+//        }
+//        task.resume()
+//    }
 
 //    func scrapeExams(completion: @escaping () -> Void) {
 //        var request = URLRequest(url: URL(string: "https://studybuddy.co.il/technion/\(id)/exams")!)
@@ -382,53 +455,102 @@ let testExams: [Exam] = [
         ]
     )
 ]
-let testCourses = [
-    Course(id: "1",
-           name: "מתמטיקה",
-           isFavorite: true,
-           lectureTags: [["אלגברה"],
-                         ["חשבון"],
-                         ["גיאומטריה"],
-                         ["טריגונומטריה"],
-                         ["סטטיסטיקה"]
+
+func createCourses(from data: [[String: Any]]) -> [Course] {
+    var courses: [Course] = []
+    
+    for courseData in data {
+        let id = courseData["id"] as? String ?? ""
+        let name = courseData["name"] as? String ?? ""
+        let course = Course(id: id, name: name)
+        
+        if let isFavorite = courseData["isFavorite"] as? Bool {
+            course.isFavorite = isFavorite
+        }
+        
+        if let lectureTags = courseData["lectureTags"] as? [[String]] {
+            course.lectureTags = lectureTags
+        }
+        
+        if let tutorialTags = courseData["tutorialTags"] as? [[String]] {
+            course.tutorialTags = tutorialTags
+        }
+        
+        if let lectureLinks = courseData["lectureLinks"] as? [String] {
+            course.lectureLinks = lectureLinks
+        }
+        
+        if let lectureRecordingLinks = courseData["lectureRecordingLinks"] as? [[String]] {
+            course.lectureRecordingLinks = lectureRecordingLinks
+        }
+        
+        if let tutorialLinks = courseData["tutorialLinks"] as? [String] {
+            course.tutorialLinks = tutorialLinks
+        }
+        
+        if let tutorialRecordingLinks = courseData["tutorialRecordingLinks"] as? [[String]] {
+            course.tutorialRecordingLinks = tutorialRecordingLinks
+        }
+        
+        courses.append(course)
+    }
+    
+    return courses
+}
+
+
+let testData: [[String: Any]] = [
+    [
+        "id": "1",
+        "name": "מתמטיקה",
+        "isFavorite": true,
+        "lectureTags": [["אלגברה"],
+                        ["חשבון"],
+                        ["גיאומטריה"],
+                        ["טריגונומטריה"],
+                        ["סטטיסטיקה"]
+                       ],
+        "tutorialTags": [["בעיות אלגברה"],
+                         ["בעיות חשבון"],
+                         ["בעיות גיאומטריה"],
+                         ["בעיות טריגונומטריה"],
+                         ["בעיות סטטיסטיקה"]
                         ],
-           tutorialTags: [["בעיות אלגברה"],
-                          ["בעיות חשבון"],
-                          ["בעיות גיאומטריה"],
-                          ["בעיות טריגונומטריה"],
-                          ["בעיות סטטיסטיקה"]
-                         ],
-           lectureLinks: ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
-           lectureRecordingLinks: [
+        "lectureLinks": ["https://mathlecturelink1.com", "https://mathlecturelink2.com"],
+        "lectureRecordingLinks": [
             ["https://mathlecturerecordinglink1.com", "https://mathlecturerecordinglink2.com"]
-           ],
-           tutorialLinks: ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
-           tutorialRecordingLinks: [
+        ],
+        "tutorialLinks": ["https://mathtutoriallink1.com", "https://mathtutoriallink2.com"],
+        "tutorialRecordingLinks": [
             ["https://mathtutorialrecordinglink1.com", "https://mathtutorialrecordinglink2.com"]
-           ],
-           exams: testExams),
-    Course(
-           id: "2",
-           name: "פיזיקה",
-           isFavorite: true,
-           lectureTags: [["מכניקה"],
-                         ["תרמודינמיקה"],
-                         ["אלקטרומגנטיות"],
-                         ["אופטיקה"],
-                         ["מכניקה קוונטית"]
+        ]
+    ],
+    [
+        "id": "2",
+        "name": "פיזיקה",
+        "isFavorite": true,
+        "lectureTags": [["מכניקה"],
+                        ["תרמודינמיקה"],
+                        ["אלקטרומגנטיות"],
+                        ["אופטיקה"],
+                        ["מכניקה קוונטית"]
+                       ],
+        "tutorialTags": [["בעיות מכניקה"],
+                         ["בעיות תרמודינמיקה"],
+                         ["בעיות אלקטרומגנטיות"],
+                         ["בעיות אופטיקה"],
+                         ["בעיות מכניקה קוונטית"]
                         ],
-           tutorialTags: [["בעיות מכניקה"],
-                          ["בעיות תרמודינמיקה"],
-                          ["בעיות אלקטרומגנטיות"],
-                          ["בעיות אופטיקה"],
-                          ["בעיות מכניקה קוונטית"]
-                         ],
-           lectureLinks: ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
-           lectureRecordingLinks: [
-                                    ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"]
-                                   ],
-           tutorialLinks: ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
-           tutorialRecordingLinks: [
-                                    ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]
-                                   ])
+        "lectureLinks": ["https://physicslecturelink1.com", "https://physicslecturelink2.com"],
+        "lectureRecordingLinks": [
+            ["https://physicslecturerecordinglink1.com", "https://physicslecturerecordinglink2.com"]
+        ],
+        "tutorialLinks": ["https://physicstutoriallink1.com", "https://physicstutoriallink2.com"],
+        "tutorialRecordingLinks": [
+            ["https://physicstutorialrecordinglink1.com", "https://physicstutorialrecordinglink2.com"]
+        ]
+    ]
 ]
+
+let testCourses = createCourses(from: testData)
+

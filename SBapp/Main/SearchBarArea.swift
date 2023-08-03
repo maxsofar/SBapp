@@ -32,7 +32,7 @@ struct SearchBarArea: View {
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
                 if !isEditing {
-                    Image(colorScheme == .light ? "Foregrnd" : "ForegrndDark")
+                    Image("SearchBar")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .shadow(color: colorScheme == .light ?
@@ -45,17 +45,17 @@ struct SearchBarArea: View {
     }
 }
 
-//struct SearchBarMain_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContainerView()
-//    }
-//
-//    struct ContainerView: View {
-//        @State private var isEditing = false
-//        var body: some View {
-//            GeometryReader{ geometry in
-//                SearchBarMain(courses: Courses(testCourses: testCourses), isEditing: $isEditing, vGeometry: geometry)
-//            }
-//        }
-//    }
-//}
+struct SearchBarMain_Previews: PreviewProvider {
+    static var previews: some View {
+        ContainerView()
+    }
+
+    struct ContainerView: View {
+        @State private var isEditing = false
+        var body: some View {
+            GeometryReader{ geometry in
+                SearchBarArea(courses: Courses(testCourses: testCourses), isEditing: $isEditing, vGeometry: geometry)
+            }
+        }
+    }
+}

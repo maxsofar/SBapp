@@ -33,11 +33,11 @@ struct MainViewToolbar: View {
     }
 }
 
-//struct MainViewToolbar_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NavigationStack {
-//            MainViewToolbar(courses: Courses(testCourses: testCourses))
-//                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
-//        }
-//    }
-//}
+struct MainViewToolbar_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationStack {
+            MainViewToolbar(courses: Courses(testCourses: testCourses))
+                .previewLayout(.fixed(width: UIScreen.main.bounds.width, height: 60))
+        }
+    }
+}
