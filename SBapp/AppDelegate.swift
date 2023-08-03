@@ -9,24 +9,28 @@ import UIKit
 
 class AppDelegate: NSObject, UIApplicationDelegate {
   private let actionService = ActionService.shared
-
-  func application(
-    _ application: UIApplication,
-    configurationForConnecting connectingSceneSession: UISceneSession,
-    options: UIScene.ConnectionOptions
-  ) -> UISceneConfiguration {
     
-    if let shortcutItem = options.shortcutItem {
-      actionService.action = Action(shortcutItem: shortcutItem)
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        UILabel.appearance(whenContainedInInstancesOf: [UINavigationBar.self]).adjustsFontSizeToFitWidth = true
+        return true
     }
 
-    let configuration = UISceneConfiguration(
-      name: connectingSceneSession.configuration.name,
-      sessionRole: connectingSceneSession.role
-    )
-    configuration.delegateClass = SceneDelegate.self
-    return configuration
-  }
+    func application(_ application: UIApplication,
+                     configurationForConnecting connectingSceneSession: UISceneSession,
+                     options: UIScene.ConnectionOptions
+    ) -> UISceneConfiguration {
+
+        if let shortcutItem = options.shortcutItem {
+          actionService.action = Action(shortcutItem: shortcutItem)
+        }
+
+        let configuration = UISceneConfiguration(
+          name: connectingSceneSession.configuration.name,
+          sessionRole: connectingSceneSession.role
+        )
+        configuration.delegateClass = SceneDelegate.self
+        return configuration
+    }
 }
 
 class SceneDelegate: NSObject, UIWindowSceneDelegate {

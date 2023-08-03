@@ -38,8 +38,8 @@ struct CustomTabBar: View {
             
             RoundedRectangle(cornerRadius: 20)
                 .frame(width: 100, height: 3)
-                .foregroundColor(.blue)
-                .position(x: selection == 0 ? UIScreen.main.bounds.width / 4 : UIScreen.main.bounds.width / 4 * 3)
+                .foregroundColor(.accentColor)
+                .position(x: selection == 0 ? UIScreen.main.bounds.width / 4.05 : UIScreen.main.bounds.width / 4 * 3.05)
                 .animation(.spring(response: 0.5, dampingFraction: 0.55, blendDuration: 0), value: selection)
         }
         .background(.bar)

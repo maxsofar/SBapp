@@ -47,10 +47,16 @@ struct ChecklistToggleStyle: ToggleStyle {
 
 struct BottomPositionPreferenceKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
-    
+
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = max(value, nextValue())
     }
+    
+//    static var defaultValue = CGFloat.zero
+//
+//    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+//        value += nextValue()
+//    }
 }
 
 struct LazyView<Content: View>: View {
@@ -63,46 +69,56 @@ struct LazyView<Content: View>: View {
     }
 }
 
+struct LessonsScrollView: View {
+    @ObservedObject var course: Course
+    @Binding var selectedTag: String?
+    @Binding var bottomPosition: CGFloat
+    
+    var body: some View {
+        ScrollView {
+            VStack {
+                ForEach(1...13, id: \.self) { weekNumber in
+                    if let tag = selectedTag, let weeks = course.allTags[tag], !weeks.contains(weekNumber - 1) {
+                        // Skip this week if a tag is selected and it doesn't appear in the tags dictionary for this week
+                        EmptyView()
+                    } else {
+                        WeekDisclosureGroup(course: course, weekNumber: weekNumber)
+                            .padding(.horizontal, 10)
+                    }
+                }
+                Spacer().frame(height: 60)
+            }
+            .background(GeometryReader { geometry in
+                Color.clear
+                    .preference(key: BottomPositionPreferenceKey.self, value: geometry.frame(in: .global).maxY)
+            })
+        }
+        .onPreferenceChange(BottomPositionPreferenceKey.self) { value in
+            bottomPosition = value
+        }
+    }
+}
+
+
+
 
 struct LessonsView: View {
     @ObservedObject var course: Course
     @Binding var selectedTag: String?
-    @State private var showingModal = false
-    @Environment(\.colorScheme) var colorScheme
     @State private var showActivityIndicator = false
     @State private var bottomPosition: CGFloat = 0
+    @Environment(\.colorScheme) var colorScheme
 
     var body: some View {
         ZStack(alignment: .center) {
-            ScrollView {
-                VStack {
-                    ForEach(1...13, id: \.self) { weekNumber in
-                        if let tag = selectedTag, let weeks = course.allTags[tag], !weeks.contains(weekNumber - 1) {
-                            // Skip this week if a tag is selected and it doesn't appear in the tags dictionary for this week
-                            EmptyView()
-                        } else {
-                            weekDisclosureGroup(weekNumber: weekNumber)
-                                .padding(.horizontal, 10)
-                        }
-                    }
-
-                    Spacer().frame(height: 60)
-                }
-                .background(GeometryReader { geometry in
-                    Color.clear
-                        .preference(key: BottomPositionPreferenceKey.self, value: geometry.frame(in: .global).maxY)
-                })
-            }
-            .onPreferenceChange(BottomPositionPreferenceKey.self) { value in
-                self.bottomPosition = value
-            }
-            .overlay(
-                Image("Lesson_bot")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 250, height: 250)
-                    .position(x: UIScreen.main.bounds.width / 2, y:  bottomPosition - UIScreen.main.bounds.width / 15)
-            )
+            LessonsScrollView(course: course, selectedTag: $selectedTag, bottomPosition: $bottomPosition)
+                .overlay(
+                    Image("Lesson_bot")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 250, height: 250)
+                        .position(x: UIScreen.main.bounds.width / 2, y: bottomPosition - UIScreen.main.bounds.width / 15)
+                )
             if showActivityIndicator {
                 customActivityIndicator()
                     .offset(y: -40)
@@ -110,55 +126,19 @@ struct LessonsView: View {
         }
         .onAppear {
             showActivityIndicator = true
-            course.scrape(){
-                showActivityIndicator = false
+            course.scrape() {
+                self.showActivityIndicator = false
             }
         }
-        
-    }
-    
-    private func weekDisclosureGroup(weekNumber: Int) -> some View {
-        DisclosureGroup {
-            WeekView(weekNumber: weekNumber, course: course)
-                .padding(.vertical, 10)
-        } label: {
-            HStack {
-                Toggle(isOn: Binding(
-                    get: { course.getIsComplete(for: weekNumber) },
-                    set: { newValue in
-                        course.setIsComplete(newValue, for: weekNumber)
-                    }
-                )) {}
-                .toggleStyle(ChecklistToggleStyle())
-
-                Spacer()
-                let localizedWeekString = NSLocalizedString("Week", comment: "")
-                Text(localizedWeekString + " \(weekNumber)")
-                    .font(.title3)
-                    .foregroundColor ({
-                        if (!course.getIsComplete(for: weekNumber)) {
-                            return colorScheme == .dark ? Color.white : Color.black
-                        } else {
-                            return Color.gray
-                        }
-                    }())
-                Spacer()
-            }
-        }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 10)
-        .background(colorScheme == .dark ? Color.init(white: 0.1) : Color.white)
-        .cornerRadius(10)
     }
 }
 
-
+//
 struct LessonsView_Previews: PreviewProvider {
     static var previews: some View {
         @State var selectedTag: String?
-        let testCourse = testCourses[0]
         NavigationView {
-            LessonsView(course: testCourse, selectedTag: $selectedTag)
+            LessonsView(course: testCourses[0], selectedTag: $selectedTag)
         }
     }
 }

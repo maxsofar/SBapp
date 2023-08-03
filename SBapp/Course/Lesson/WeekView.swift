@@ -15,8 +15,8 @@ struct WeekView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 20) {
-                linkView(materialType: "Lecture", systemImage: "link", badges: course.lectureTags, links: course.lectureLinks, recordingLinks: course.lectureRecordingLinks, weekNumber: weekNumber)
-                linkView(materialType: "Tutorial", systemImage: "link", badges: course.tutorialTags, links: course.tutorialLinks, recordingLinks: course.tutorialRecordingLinks, weekNumber: weekNumber)
+                cardTitleView(materialType: "Lecture", systemImage: "link", badges: course.lectureTags, links: course.lectureLinks, recordingLinks: course.lectureRecordingLinks, weekNumber: weekNumber)
+                cardTitleView(materialType: "Tutorial", systemImage: "link", badges: course.tutorialTags, links: course.tutorialLinks, recordingLinks: course.tutorialRecordingLinks, weekNumber: weekNumber)
             }
         }
     }
@@ -70,12 +70,12 @@ func recordingLinkView(links: [String]) -> some View {
         ForEach(links.indices, id: \.self) { index in
             if let link = URL(string: links[index]) {
                 Link(destination: link) {
-                    let localizedRecording = NSLocalizedString("Recording", comment: "")
                     if links.count > 1 {
                         let localizedRecordingWithIndex = NSLocalizedString("Recording %d", comment: "")
                         Label(String(format: localizedRecordingWithIndex, index + 1), systemImage: "video")
                             .labelStyle(CustomLabelStyle())
                     } else {
+                        let localizedRecording = NSLocalizedString("Recording", comment: "")
                         Label(localizedRecording, systemImage: "video")
                             .labelStyle(CustomLabelStyle())
                     }
@@ -112,10 +112,11 @@ func materialLinkView(materialType: String, systemImage: String, links: [String]
     .padding(.vertical, 10)
 }
 
-func linkView(materialType: String, systemImage: String, badges: [[String]], links: [String], recordingLinks: [[String]], weekNumber: Int) -> some View {
+func cardTitleView(materialType: String, systemImage: String, badges: [[String]], links: [String], recordingLinks: [[String]], weekNumber: Int) -> some View {
     GroupBox(label:
         VStack(alignment: .leading) {
-            Text(materialType)
+        let localizedMaterial = NSLocalizedString(materialType, comment: "")
+            Text(localizedMaterial)
                 .font(.title)
                 .padding(.bottom, 0.5)
             if !badges.isEmpty && !badges[weekNumber - 1].isEmpty {

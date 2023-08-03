@@ -7,12 +7,11 @@
 
 import SwiftUI
 
-struct SearchBarMain: View {
+struct SearchBarArea: View {
     @ObservedObject var courses: Courses
     @Binding var isEditing: Bool
     @Namespace var searchTransition
     var vGeometry: GeometryProxy
-    let screenWidth = UIScreen.main.bounds.width
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -27,13 +26,13 @@ struct SearchBarMain: View {
                 SearchBar(
                     courses: courses,
                     isEditing: $isEditing,
-                    geoHeight:  vGeometry.size.height * 0.08
+                    searchBarHeight: vGeometry.size.height * 0.08
                 )
                 .offset(y: isEditing ? 0 : zGeometry.size.width * 0.65)
                 .matchedGeometryEffect(id: "SearchBar", in: searchTransition)
                 
                 if !isEditing {
-                    Image(colorScheme == .light ? "Foregrnd" : "ForegrndDark")
+                    Image("SearchBar")
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .shadow(color: colorScheme == .light ?
@@ -46,17 +45,17 @@ struct SearchBarMain: View {
     }
 }
 
-//struct SearchBarMain_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ContainerView()
-//    }
-//
-//    struct ContainerView: View {
-//        @State private var isEditing = false
-//        var body: some View {
-//            GeometryReader{ geometry in
-//                SearchBarMain(courses: Courses(testCourses: testCourses), isEditing: $isEditing, vGeometry: geometry)
-//            }
-//        }
-//    }
-//}
+struct SearchBarMain_Previews: PreviewProvider {
+    static var previews: some View {
+        ContainerView()
+    }
+
+    struct ContainerView: View {
+        @State private var isEditing = false
+        var body: some View {
+            GeometryReader{ geometry in
+                SearchBarArea(courses: Courses(testCourses: testCourses), isEditing: $isEditing, vGeometry: geometry)
+            }
+        }
+    }
+}

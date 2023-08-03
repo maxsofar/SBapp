@@ -7,22 +7,10 @@
 
 import SwiftUI
 
-struct ToolbarButtons: View {
+struct FavoriteButton: View {
     @ObservedObject var course: Course
-    @Binding var selectedTag: String?
-    @Binding var showFilterButton: Bool
-    @State var showingModal = false
     
     var body: some View {
-        HStack {
-            favoriteButton
-            if showFilterButton {
-                filterButton
-            }
-        }
-    }
-    
-    private var favoriteButton: some View {
         Button{
             let generator = UIImpactFeedbackGenerator(style: .light)
             generator.impactOccurred()
@@ -32,8 +20,14 @@ struct ToolbarButtons: View {
                 .scaleEffect(1.2)
         }
     }
+}
+
+struct FilterButton: View {
+    @ObservedObject var course: Course
+    @Binding var selectedTag: String?
+    @State var showingModal = false
     
-    private var filterButton: some View {
+    var body: some View {
         Button() {
             showingModal.toggle()
         } label: {
@@ -47,6 +41,7 @@ struct ToolbarButtons: View {
         }
     }
 }
+
 
 struct ToolbarButtons_Previews: PreviewProvider {
     struct PreviewView : View {
@@ -64,7 +59,9 @@ struct ToolbarButtons_Previews: PreviewProvider {
                     }
                     .toolbar {
                         ToolbarItemGroup(placement: .navigationBarTrailing) {
-                            ToolbarButtons(course: testCourses[0], selectedTag: $selectedTag, showFilterButton: $showFilterButton)
+                            FavoriteButton(course: testCourses[0])
+                            FilterButton(course: testCourses[0], selectedTag: $selectedTag)
+                            
                         }
                     }
             }
